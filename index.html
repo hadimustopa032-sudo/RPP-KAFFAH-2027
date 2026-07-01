@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,472 +11,566 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
         @media print {
-            body * { visibility: hidden; }
-            #print-area, #print-area * { visibility: visible; }
-            #print-area { position: absolute; left: 0; top: 0; width: 100%; }
-            .no-print { display: none !important; }
+            body * {
+                visibility: hidden;
+            }
+
+            #print-area,
+            #print-area * {
+                visibility: visible;
+            }
+
+            #print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            .no-print {
+                display: none !important;
+            }
         }
     </style>
 </head>
+
 <body class="bg-slate-50 text-slate-800 font-sans flex flex-col min-h-screen">
 
-<div id="app" class="flex flex-col flex-1">
+    <div id="app" class="flex flex-col flex-1">
 
-    <!-- 1. HALAMAN LOGIN -->
-    <div v-if="!isLoggedIn" class="flex-1 flex items-center justify-center p-6">
-        <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md border border-slate-100">
-            <div class="text-center mb-6">
-                <div class="flex justify-center items-center gap-6 mb-4">
-                    <img src="pramuka-silhouette-wing-beak-png-clipart-royalty-svg-png-22.png" alt="Logo Tunas Kelapa" class="h-16 object-contain">
-                    <img src="images (2).png" alt="Logo Kaffah" class="h-16 object-contain">
+        <!-- 1. HALAMAN LOGIN -->
+        <div v-if="!isLoggedIn" class="flex-1 flex items-center justify-center p-6">
+            <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md border border-slate-100">
+                <div class="text-center mb-6">
+                    <div class="flex justify-center items-center gap-6 mb-4">
+                        <img src="pramuka-silhouette-wing-beak-png-clipart-royalty-svg-png-22.png"
+                            alt="Logo Tunas Kelapa" class="h-16 object-contain">
+                        <img src="images (2).png" alt="Logo Kaffah" class="h-16 object-contain">
+                    </div>
+                    <h1 class="text-2xl font-bold text-sky-700 uppercase tracking-wide">RPP PRAMUKA KAFFAH</h1>
+                    <p class="text-sm text-slate-500 mt-1">Sistem Latihan & Rencana Kegiatan Membina Global</p>
                 </div>
-                <h1 class="text-2xl font-bold text-sky-700 uppercase tracking-wide">RPP PRAMUKA KAFFAH</h1>
-                <p class="text-sm text-slate-500 mt-1">Sistem Latihan & Rencana Kegiatan Membina Global</p>
+                <form @submit.prevent="handleLogin">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium mb-1">ID Pembina</label>
+                        <input type="text" v-model="loginForm.id"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-sky-500"
+                            placeholder="Masukkan ID Pembina" required>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-1">Password</label>
+                        <input type="password" v-model="loginForm.password"
+                            class="w-full px-3 py-2 border rounded-lg focus:outline-sky-500" required>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 rounded-lg transition shadow">
+                        Masuk ke Sistem
+                    </button>
+                    <p v-if="loginError" class="text-red-500 text-sm mt-3 text-center">{{ loginError }}</p>
+                </form>
             </div>
-            <form @submit.prevent="handleLogin">
-                <div class="mb-4">
-                    <label class="block text-sm font-medium mb-1">ID Pembina</label>
-                    <input type="text" v-model="loginForm.id" class="w-full px-3 py-2 border rounded-lg focus:outline-sky-500" placeholder="Masukkan ID Pembina" required>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-sm font-medium mb-1">Password</label>
-                    <input type="password" v-model="loginForm.password" class="w-full px-3 py-2 border rounded-lg focus:outline-sky-500" required>
-                </div>
-                <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 rounded-lg transition shadow">
-                    Masuk ke Sistem
-                </button>
-                <p v-if="loginError" class="text-red-500 text-sm mt-3 text-center">{{ loginError }}</p>
-            </form>
-        </div>
-    </div>
-
-    <!-- MAIN APLIKASI (JIKA SUDAH LOGIN) -->
-    <div v-else class="flex-1 flex flex-col no-print">
-        <!-- Navbar Utama -->
-        <header class="bg-sky-700 text-white shadow-md px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2 bg-white/10 p-1.5 rounded-lg">
-                    <img src="pramuka-silhouette-wing-beak-png-clipart-royalty-svg-png-22.png" alt="Logo Tunas Kelapa" class="h-9 w-9 object-contain brightness-0 invert">
-                    <img src="images (2).png" alt="Logo Kaffah" class="h-9 w-9 object-contain">
-                </div>
-                <div>
-                    <h1 class="font-bold text-xl tracking-wide">RPP Pramuka Kaffah</h1>
-                    <p class="text-xs text-sky-100">Pangkalan: {{ pengaturan.namaPangkalan }} | Gudep: {{ pengaturan.NomerGudep }}</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-4">
-                <span class="text-sm bg-sky-800 px-3 py-1 rounded-full font-medium">👤 {{ userActive.NamaPembina }} ({{ userActive.Kualifikasi }})</span>
-                <button @click="logout" class="bg-red-600 hover:bg-red-700 text-xs px-3 py-1.5 rounded transition font-medium">Keluar</button>
-            </div>
-        </header>
-
-        <!-- Menu Tabs -->
-        <div class="bg-white border-b flex gap-4 px-6">
-            <button @click="currentTab = 'jadwal'" :class="tabClass('jadwal')">Jadwal & Rencana Sinkron</button>
-            <button @click="currentTab = 'pengaturan'" :class="tabClass('pengaturan')">Pengaturan Pangkalan</button>
         </div>
 
-        <!-- Konten Utama -->
-        <main class="flex-1 p-6 max-w-7xl w-full mx-auto">
-            <div v-if="currentTab === 'jadwal'" class="space-y-6">
-                <!-- Form Pengisian Data RPP -->
-                <div class="bg-white p-6 rounded-xl shadow border border-slate-100">
-                    <h3 class="text-md font-bold text-sky-800 mb-4">➕ Form Pengisian Rencana Kegiatan Membina (RPP Terpusat)</h3>
-                    
-                    <!-- Pilihan Cepat Bank Materi SKU -->
-                    <div class="mb-4 p-3 bg-sky-50 rounded-lg border border-sky-200">
-                        <label class="block text-xs font-bold text-sky-900 mb-1">💡 Pilih Cepat Khazanah Materi SKU Resmi (100% Lengkap):</label>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- MAIN APLIKASI (JIKA SUDAH LOGIN) -->
+        <div v-else class="flex-1 flex flex-col no-print">
+            <!-- Navbar Utama -->
+            <header class="bg-sky-700 text-white shadow-md px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 bg-white/10 p-1.5 rounded-lg">
+                        <img src="pramuka-silhouette-wing-beak-png-clipart-royalty-svg-png-22.png"
+                            alt="Logo Tunas Kelapa" class="h-9 w-9 object-contain brightness-0 invert">
+                        <img src="images (2).png" alt="Logo Kaffah" class="h-9 w-9 object-contain">
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-xl tracking-wide">RPP Pramuka Kaffah</h1>
+                        <p class="text-xs text-sky-100">Pangkalan: {{ pengaturan.namaPangkalan }} | Gudep: {{
+                            pengaturan.NomerGudep }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-sm bg-sky-800 px-3 py-1 rounded-full font-medium">👤 {{ userActive.NamaPembina }}
+                        ({{ userActive.Kualifikasi }})</span>
+                    <button @click="logout"
+                        class="bg-red-600 hover:bg-red-700 text-xs px-3 py-1.5 rounded transition font-medium">Keluar</button>
+                </div>
+            </header>
+
+            <!-- Menu Tabs -->
+            <div class="bg-white border-b flex gap-4 px-6">
+                <button @click="currentTab = 'jadwal'" :class="tabClass('jadwal')">Jadwal & Rencana Sinkron</button>
+                <button @click="currentTab = 'pengaturan'" :class="tabClass('pengaturan')">Pengaturan Pangkalan</button>
+            </div>
+
+            <!-- Konten Utama -->
+            <main class="flex-1 p-6 max-w-7xl w-full mx-auto">
+                <div v-if="currentTab === 'jadwal'" class="space-y-6">
+                    <!-- Form Pengisian Data RPP -->
+                    <div class="bg-white p-6 rounded-xl shadow border border-slate-100">
+                        <h3 class="text-md font-bold text-sky-800 mb-4">➕ Form Pengisian Rencana Kegiatan Membina (RPP
+                            Terpusat)</h3>
+
+                        <!-- Pilihan Cepat Bank Materi SKU -->
+                        <div class="mb-4 p-3 bg-sky-50 rounded-lg border border-sky-200">
+                            <label class="block text-xs font-bold text-sky-900 mb-1">💡 Pilih Cepat Khazanah Materi SKU
+                                Resmi (100% Lengkap):</label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <select v-model="pilihanCepat.golongan" @change="updateOpsiMateri"
+                                        class="w-full border bg-white px-2 py-1 rounded text-xs">
+                                        <option value="Siaga">Siaga</option>
+                                        <option value="Penggalang">Penggalang</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <select v-model="pilihanCepat.index" @change="terapkanMateriCepat"
+                                        class="w-full border bg-white px-2 py-1 rounded text-xs">
+                                        <option value="">-- Silakan Pilih Syarat Kecakapan Latihan --</option>
+                                        <option v-for="(m, idx) in bankMateri[pilihanCepat.golongan]" :key="idx"
+                                            :value="idx">
+                                            {{ m.materi }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Utama -->
+                        <form @submit.prevent="tambahJadwal" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <div>
-                                <select v-model="pilihanCepat.golongan" @change="updateOpsiMateri" class="w-full border bg-white px-2 py-1 rounded text-xs">
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Hari dan Tanggal</label>
+                                <input type="date" v-model="formJadwal.tanggal"
+                                    class="w-full border px-3 py-2 rounded-lg text-sm" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Waktu Latihan</label>
+                                <input type="text" v-model="formJadwal.waktu"
+                                    class="w-full border px-3 py-2 rounded-lg text-sm" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Golongan Terpilih</label>
+                                <select v-model="formJadwal.golongan" class="w-full border px-3 py-2 rounded-lg text-sm"
+                                    required>
                                     <option value="Siaga">Siaga</option>
                                     <option value="Penggalang">Penggalang</option>
                                 </select>
                             </div>
                             <div>
-                                <select v-model="pilihanCepat.index" @change="terapkanMateriCepat" class="w-full border bg-white px-2 py-1 rounded text-xs">
-                                    <option value="">-- Silakan Pilih Syarat Kecakapan Latihan --</option>
-                                    <option v-for="(m, idx) in bankMateri[pilihanCepat.golongan]" :key="idx" :value="idx">
-                                        {{ m.materi }}
-                                    </option>
-                                </select>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Durasi Latihan</label>
+                                <input type="text" v-model="formJadwal.durasi"
+                                    class="w-full border px-3 py-2 rounded-lg text-sm" required>
                             </div>
-                        </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Materi Latihan (SKU /
+                                    SKK)</label>
+                                <input type="text" v-model="formJadwal.materi"
+                                    class="w-full border px-3 py-2 rounded-lg text-sm" required>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Tujuan
+                                    Pembelajaran</label>
+                                <input type="text" v-model="formJadwal.tujuan"
+                                    class="w-full border px-3 py-2 rounded-lg text-sm" required>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Kegiatan Pokok
+                                    Latihan</label>
+                                <textarea v-model="formJadwal.kegiatan"
+                                    class="w-full border px-3 py-2 rounded-lg text-sm" rows="3" required></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Alat / Media
+                                    Latihan</label>
+                                <textarea v-model="formJadwal.alat" class="w-full border px-3 py-2 rounded-lg text-sm"
+                                    rows="3" required></textarea>
+                            </div>
+
+                            <!-- INPUT TAUTAN PENDUKUNG MATERI -->
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Link Lembar Kerja
+                                    Andika</label>
+                                <div class="p-2 border border-sky-200 rounded-lg bg-sky-50/50">
+                                    <input type="url" v-model="formJadwal.linkLKS"
+                                        class="w-full border bg-white px-3 py-2 rounded-md text-xs focus:outline-sky-500"
+                                        placeholder="https://drive.google.com/...">
+                                    <span class="text-[10px] text-slate-500 block mt-1 leading-tight">Masukkan tautan
+                                        berkas digital pendukung latihan andika.</span>
+                                </div>
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">Evaluasi Pembina</label>
+                                <textarea v-model="formJadwal.evaluasi"
+                                    class="w-full border px-3 py-2 rounded-lg text-sm" rows="1" required></textarea>
+                            </div>
+                            <div class="md:col-span-4 flex justify-end gap-2">
+                                <button type="button" @click="loadDataOnline"
+                                    class="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm transition">🔄
+                                    Segarkan Sinkronisasi</button>
+                                <button type="submit" :disabled="isSaving"
+                                    class="bg-sky-600 hover:bg-sky-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition shadow">
+                                    {{ isSaving ? 'Menyimpan ke Cloud...' : 'Simpan Real-Time ke Cloud' }}
+                                </button>
+                            </div>
+                        </form>
                     </div>
 
-                    <!-- Form Utama -->
-                    <form @submit.prevent="tambahJadwal" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">Hari dan Tanggal</label>
-                            <input type="date" v-model="formJadwal.tanggal" class="w-full border px-3 py-2 rounded-lg text-sm" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">Waktu Latihan</label>
-                            <input type="text" v-model="formJadwal.waktu" class="w-full border px-3 py-2 rounded-lg text-sm" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">Golongan Terpilih</label>
-                            <select v-model="formJadwal.golongan" class="w-full border px-3 py-2 rounded-lg text-sm" required>
-                                <option value="Siaga">Siaga</option>
-                                <option value="Penggalang">Penggalang</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">Durasi Latihan</label>
-                            <input type="text" v-model="formJadwal.durasi" class="w-full border px-3 py-2 rounded-lg text-sm" required>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">Materi Latihan (SKU / SKK)</label>
-                            <input type="text" v-model="formJadwal.materi" class="w-full border px-3 py-2 rounded-lg text-sm" required>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">Tujuan Pembelajaran</label>
-                            <input type="text" v-model="formJadwal.tujuan" class="w-full border px-3 py-2 rounded-lg text-sm" required>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">Kegiatan Pokok Latihan</label>
-                            <textarea v-model="formJadwal.kegiatan" class="w-full border px-3 py-2 rounded-lg text-sm" rows="3" required></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">Alat / Media Latihan</label>
-                            <textarea v-model="formJadwal.alat" class="w-full border px-3 py-2 rounded-lg text-sm" rows="3" required></textarea>
-                        </div>
-                        
-                        <!-- INPUT TAUTAN PENDUKUNG MATERI -->
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">Link Lembar Kerja Andika</label>
-                            <div class="p-2 border border-sky-200 rounded-lg bg-sky-50/50">
-                                <input type="url" v-model="formJadwal.linkLKS" class="w-full border bg-white px-3 py-2 rounded-md text-xs focus:outline-sky-500" placeholder="https://drive.google.com/...">
-                                <span class="text-[10px] text-slate-500 block mt-1 leading-tight">Masukkan tautan berkas digital pendukung latihan andika.</span>
-                            </div>
-                        </div>
-
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-semibold text-slate-500 mb-1">Evaluasi Pembina</label>
-                            <textarea v-model="formJadwal.evaluasi" class="w-full border px-3 py-2 rounded-lg text-sm" rows="1" required></textarea>
-                        </div>
-                        <div class="md:col-span-4 flex justify-end gap-2">
-                            <button type="button" @click="loadDataOnline" class="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-sm transition">🔄 Segarkan Sinkronisasi</button>
-                            <button type="submit" :disabled="isSaving" class="bg-sky-600 hover:bg-sky-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition shadow">
-                                {{ isSaving ? 'Menyimpan ke Cloud...' : 'Simpan Real-Time ke Cloud' }}
-                            </button>
-                        </div>
-                    </form>
+                    <h2 class="text-xl font-bold text-slate-700 mt-6">Daftar Rencana Pembelajaran Berjalan (SINKRON
+                        GLOBAL)</h2>
+                    <div class="bg-white rounded-xl shadow overflow-x-auto border">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 border-b text-slate-600 text-xs font-semibold uppercase">
+                                    <th class="p-3">Tanggal</th>
+                                    <th class="p-3">Pembina</th>
+                                    <th class="p-3">Golongan</th>
+                                    <th class="p-3">Materi</th>
+                                    <th class="p-3">Link Lembar Kerja</th>
+                                    <th class="p-3 text-center">Aksi RPP</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm divide-y">
+                                <tr v-for="(jadwal, index) in jadwalSaya" :key="index" class="hover:bg-slate-50">
+                                    <td class="p-3 whitespace-nowrap">{{ formatTanggal(jadwal.tanggal) }}</td>
+                                    <td class="p-3 font-medium">{{ jadwal.pembina }}</td>
+                                    <td class="p-3"><span
+                                            class="bg-sky-100 text-sky-800 px-2 py-0.5 text-xs rounded font-bold">{{
+                                            jadwal.golongan }}</span></td>
+                                    <td class="p-3 font-semibold text-slate-700">{{ jadwal.materi }}</td>
+                                    <td class="p-3 text-xs">
+                                        <a v-if="jadwal.linkLKS" :href="jadwal.linkLKS" target="_blank"
+                                            class="text-sky-600 font-bold hover:underline inline-flex items-center gap-1">
+                                            🔗 Buka Link LKS
+                                        </a>
+                                        <span v-else class="text-slate-400 italic">Tidak Ada Tautan</span>
+                                    </td>
+                                    <td class="p-3 text-center whitespace-nowrap flex justify-center gap-2">
+                                        <button @click="cetakRPP(jadwal)"
+                                            class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1 rounded text-xs font-medium transition shadow">
+                                            📄 Cetak RPP
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr v-if="jadwalSaya.length === 0">
+                                    <td colspan="6" class="p-8 text-center text-gray-400 italic">Belum ada agenda RPP
+                                        untuk akun Anda. Tekan "Segarkan Sinkronisasi" untuk mengambil data cloud.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <h2 class="text-xl font-bold text-slate-700 mt-6">Daftar Rencana Pembelajaran Berjalan (SINKRON GLOBAL)</h2>
-                <div class="bg-white rounded-xl shadow overflow-x-auto border">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 border-b text-slate-600 text-xs font-semibold uppercase">
-                                <th class="p-3">Tanggal</th>
-                                <th class="p-3">Pembina</th>
-                                <th class="p-3">Golongan</th>
-                                <th class="p-3">Materi</th>
-                                <th class="p-3">Link Lembar Kerja</th>
-                                <th class="p-3 text-center">Aksi RPP</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm divide-y">
-                            <tr v-for="(jadwal, index) in daftarJadwal" :key="index" class="hover:bg-slate-50">
-                                <td class="p-3 whitespace-nowrap">{{ formatTanggal(jadwal.tanggal) }}</td>
-                                <td class="p-3 font-medium">{{ jadwal.pembina }}</td>
-                                <td class="p-3"><span class="bg-sky-100 text-sky-800 px-2 py-0.5 text-xs rounded font-bold">{{ jadwal.golongan }}</span></td>
-                                <td class="p-3 font-semibold text-slate-700">{{ jadwal.materi }}</td>
-                                <td class="p-3 text-xs">
-                                    <a v-if="jadwal.linkLKS" :href="jadwal.linkLKS" target="_blank" class="text-sky-600 font-bold hover:underline inline-flex items-center gap-1">
-                                        🔗 Buka Link LKS
-                                    </a>
-                                    <span v-else class="text-slate-400 italic">Tidak Ada Tautan</span>
-                                </td>
-                                <td class="p-3 text-center whitespace-nowrap flex justify-center gap-2">
-                                    <button @click="cetakRPP(jadwal)" class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1 rounded text-xs font-medium transition shadow">
-                                        📄 Cetak RPP
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr v-if="daftarJadwal.length === 0">
-                                <td colspan="6" class="p-8 text-center text-gray-400 italic">Belum ada agenda RPP terpusat. Tekan "Segarkan Sinkronisasi" untuk mengambil data cloud.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- TAB PENGATURAN -->
+                <div v-if="currentTab === 'pengaturan'" class="bg-white p-6 rounded-xl shadow border max-w-2xl">
+                    <h2 class="text-xl font-bold text-slate-700 mb-4">Pengaturan Data Pangkalan</h2>
+                    <div class="grid grid-cols-1 gap-4 text-sm">
+                        <div><label class="block text-xs font-semibold text-slate-500 mb-1">Nama Pangkalan</label><input
+                                type="text" v-model="pengaturan.namaPangkalan"
+                                class="w-full border px-3 py-2 rounded-lg"></div>
+                        <div><label class="block text-xs font-semibold text-slate-500 mb-1">Nomor Gudep</label><input
+                                type="text" v-model="pengaturan.NomerGudep" class="w-full border px-3 py-2 rounded-lg">
+                        </div>
+                        <div><label class="block text-xs font-semibold text-slate-500 mb-1">Nama Mabigus</label><input
+                                type="text" v-model="pengaturan.namaMabigus" class="w-full border px-3 py-2 rounded-lg">
+                        </div>
+                        <div><label class="block text-xs font-semibold text-slate-500 mb-1">Alamat Lengkap
+                                Sekolah</label><textarea v-model="pengaturan.alamatSekolah"
+                                class="w-full border px-3 py-2 rounded-lg" rows="2"></textarea></div>
+                    </div>
                 </div>
-            </div>
-
-            <!-- TAB PENGATURAN -->
-            <div v-if="currentTab === 'pengaturan'" class="bg-white p-6 rounded-xl shadow border max-w-2xl">
-                <h2 class="text-xl font-bold text-slate-700 mb-4">Pengaturan Data Pangkalan</h2>
-                <div class="grid grid-cols-1 gap-4 text-sm">
-                    <div><label class="block text-xs font-semibold text-slate-500 mb-1">Nama Pangkalan</label><input type="text" v-model="pengaturan.namaPangkalan" class="w-full border px-3 py-2 rounded-lg"></div>
-                    <div><label class="block text-xs font-semibold text-slate-500 mb-1">Nomor Gudep</label><input type="text" v-model="pengaturan.NomerGudep" class="w-full border px-3 py-2 rounded-lg"></div>
-                    <div><label class="block text-xs font-semibold text-slate-500 mb-1">Nama Mabigus</label><input type="text" v-model="pengaturan.namaMabigus" class="w-full border px-3 py-2 rounded-lg"></div>
-                    <div><label class="block text-xs font-semibold text-slate-500 mb-1">Alamat Lengkap Sekolah</label><textarea v-model="pengaturan.alamatSekolah" class="w-full border px-3 py-2 rounded-lg" rows="2"></textarea></div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- ================= KERTAS CETAK RPP ================= -->
-    <div id="print-area" class="hidden print:block p-8 bg-white text-black max-w-4xl mx-auto text-sm">
-        <div class="flex items-center justify-between border-b-2 border-black pb-3 mb-4">
-            <img src="pramuka-silhouette-wing-beak-png-clipart-royalty-svg-png-22.png" alt="Tunas Kelapa Kiri" class="h-16 w-16 object-contain">
-            <div class="text-center flex-1 px-4">
-                <h2 class="text-md font-bold uppercase tracking-wide">Gerakan Pramuka</h2>
-                <h1 class="text-lg font-bold uppercase tracking-wide">Pangkalan {{ pengaturan.namaPangkalan }}</h1>
-                <p class="text-xs font-semibold">GUGUS DEPAN: {{ pengaturan.NomerGudep }}</p>
-                <p class="text-[11px] italic">{{ pengaturan.alamatSekolah }}</p>
-            </div>
-            <img src="images (2).png" alt="Logo Kaffah Kanan" class="h-16 w-16 object-contain">
+            </main>
         </div>
 
-        <h3 class="text-center font-bold text-md uppercase mb-6 underline tracking-wider">Rencana Kegiatan Membina (RPP)</h3>
+        <!-- ================= KERTAS CETAK RPP ================= -->
+        <div id="print-area" class="hidden print:block p-8 bg-white text-black max-w-4xl mx-auto text-sm">
+            <div class="flex items-center justify-between border-b-2 border-black pb-3 mb-4">
+                <img src="pramuka-silhouette-wing-beak-png-clipart-royalty-svg-png-22.png" alt="Tunas Kelapa Kiri"
+                    class="h-16 w-16 object-contain">
+                <div class="text-center flex-1 px-4">
+                    <h2 class="text-md font-bold uppercase tracking-wide">Gerakan Pramuka</h2>
+                    <h1 class="text-lg font-bold uppercase tracking-wide">Pangkalan {{ pengaturan.namaPangkalan }}</h1>
+                    <p class="text-xs font-semibold">GUGUS DEPAN: {{ pengaturan.NomerGudep }}</p>
+                    <p class="text-[11px] italic">{{ pengaturan.alamatSekolah }}</p>
+                </div>
+                <img src="images (2).png" alt="Logo Kaffah Kanan" class="h-16 w-16 object-contain">
+            </div>
 
-        <table class="w-full mb-6 border-none text-xs">
-            <tr>
-                <td class="w-1/4 py-1">Hari / Tanggal</td><td class="w-2 py-1">:</td><td class="py-1 font-medium">{{ formatTanggal(rppTerpilih.tanggal) }}</td>
-                <td class="w-1/4 py-1">Golongan Pramuka</td><td class="w-2 py-1">:</td><td class="py-1 font-medium">{{ rppTerpilih.golongan }}</td>
-            </tr>
-            <tr>
-                <td class="py-1">Waktu / Durasi</td><td class="py-1">:</td><td class="py-1">{{ rppTerpilih.waktu }} / ({{ rppTerpilih.durasi }})</td>
-                <td class="py-1">Pembina Latihan</td><td class="py-1">:</td><td class="py-1 font-medium">{{ rppTerpilih.pembina }}</td>
-            </tr>
-        </table>
+            <h3 class="text-center font-bold text-md uppercase mb-6 underline tracking-wider">Rencana Kegiatan Membina
+                (RPP)</h3>
 
-        <table class="w-full border-collapse border border-black text-xs mb-8">
-            <thead>
-                <tr class="bg-gray-100 font-bold">
-                    <th class="border border-black p-2 text-center w-8">No</th>
-                    <th class="border border-black p-2 text-center w-20">Waktu</th>
-                    <th class="border border-black p-2 text-left">SKU / SKK / Materi</th>
-                    <th class="border border-black p-2 text-left">Tujuan Latihan</th>
-                    <th class="border border-black p-2 text-left">Kegiatan Pokok</th>
-                    <th class="border border-black p-2 text-left w-24">Alat/Media</th>
-                    <th class="border border-black p-2 text-left w-24">Evaluasi</th>
-                </tr>
-            </thead>
-            <tbody>
+            <table class="w-full mb-6 border-none text-xs">
                 <tr>
-                    <td class="border border-black p-2 text-center align-top">1</td>
-                    <td class="border border-black p-2 text-center align-top">{{ rppTerpilih.waktu }}</td>
-                    <td class="border border-black p-2 align-top font-bold text-gray-900">{{ rppTerpilih.materi }}</td>
-                    <td class="border border-black p-2 align-top text-justify">{{ rppTerpilih.tujuan }}</td>
-                    <td class="border border-black p-2 align-top text-justify whitespace-pre-line">{{ rppTerpilih.kegiatan }}</td>
-                    <td class="border border-black p-2 align-top text-justify">
-                        {{ rppTerpilih.alat }}
-                        <div v-if="rppTerpilih.linkLKS" class="mt-2 text-[10px] font-bold text-sky-800 border-t pt-1 border-black">
-                            🔗 Link Lembar Kerja:<br>
-                            <span class="text-blue-700 underline break-all text-[9px] font-mono">{{ rppTerpilih.linkLKS }}</span>
-                        </div>
-                    </td>
-                    <td class="border border-black p-2 align-top text-justify">{{ rppTerpilih.evaluasi }}</td>
+                    <td class="w-1/4 py-1">Hari / Tanggal</td>
+                    <td class="w-2 py-1">:</td>
+                    <td class="py-1 font-medium">{{ formatTanggal(rppTerpilih.tanggal) }}</td>
+                    <td class="w-1/4 py-1">Golongan Pramuka</td>
+                    <td class="w-2 py-1">:</td>
+                    <td class="py-1 font-medium">{{ rppTerpilih.golongan }}</td>
                 </tr>
-            </tbody>
-        </table>
+                <tr>
+                    <td class="py-1">Waktu / Durasi</td>
+                    <td class="py-1">:</td>
+                    <td class="py-1">{{ rppTerpilih.waktu }} / ({{ rppTerpilih.durasi }})</td>
+                    <td class="py-1">Pembina Latihan</td>
+                    <td class="py-1">:</td>
+                    <td class="py-1 font-medium">{{ rppTerpilih.pembina }}</td>
+                </tr>
+            </table>
 
-        <div class="flex justify-between text-xs mt-12 mb-16">
-            <div class="text-center"><p>Mengetahui,</p><p class="font-bold mb-16">Kamabigus</p><p class="underline font-bold">{{ pengaturan.namaMabigus }}</p></div>
-            <div class="text-center"><p>{{ pengaturan.kota }}, _______________ 2026</p><p class="font-bold mb-16">Pembina Latihan</p><p class="underline font-bold">{{ rppTerpilih.pembina }}</p></div>
+            <table class="w-full border-collapse border border-black text-xs mb-8">
+                <thead>
+                    <tr class="bg-gray-100 font-bold">
+                        <th class="border border-black p-2 text-center w-8">No</th>
+                        <th class="border border-black p-2 text-center w-20">Waktu</th>
+                        <th class="border border-black p-2 text-left">SKU / SKK / Materi</th>
+                        <th class="border border-black p-2 text-left">Tujuan Latihan</th>
+                        <th class="border border-black p-2 text-left">Kegiatan Pokok</th>
+                        <th class="border border-black p-2 text-left w-24">Alat/Media</th>
+                        <th class="border border-black p-2 text-left w-24">Evaluasi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-black p-2 text-center align-top">1</td>
+                        <td class="border border-black p-2 text-center align-top">{{ rppTerpilih.waktu }}</td>
+                        <td class="border border-black p-2 align-top font-bold text-gray-900">{{ rppTerpilih.materi }}
+                        </td>
+                        <td class="border border-black p-2 align-top text-justify">{{ rppTerpilih.tujuan }}</td>
+                        <td class="border border-black p-2 align-top text-justify whitespace-pre-line">{{
+                            rppTerpilih.kegiatan }}</td>
+                        <td class="border border-black p-2 align-top text-justify">
+                            {{ rppTerpilih.alat }}
+                            <div v-if="rppTerpilih.linkLKS"
+                                class="mt-2 text-[10px] font-bold text-sky-800 border-t pt-1 border-black">
+                                🔗 Link Lembar Kerja:<br>
+                                <span class="text-blue-700 underline break-all text-[9px] font-mono">{{
+                                    rppTerpilih.linkLKS }}</span>
+                            </div>
+                        </td>
+                        <td class="border border-black p-2 align-top text-justify">{{ rppTerpilih.evaluasi }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="flex justify-between text-xs mt-12 mb-16">
+                <div class="text-center">
+                    <p>Mengetahui,</p>
+                    <p class="font-bold mb-16">Kamabigus</p>
+                    <p class="underline font-bold">{{ pengaturan.namaMabigus }}</p>
+                </div>
+                <div class="text-center">
+                    <p>{{ pengaturan.kota }}, _______________ 2026</p>
+                    <p class="font-bold mb-16">Pembina Latihan</p>
+                    <p class="underline font-bold">{{ rppTerpilih.pembina }}</p>
+                </div>
+            </div>
         </div>
+
+        <!-- FOOTER PERMANEN -->
+        <footer
+            class="bg-slate-800 text-slate-400 text-center py-3 text-xs font-semibold tracking-wider border-t border-slate-700 no-print mt-auto">
+            created by Kak Hadi
+        </footer>
+
     </div>
 
-    <!-- FOOTER PERMANEN -->
-    <footer class="bg-slate-800 text-slate-400 text-center py-3 text-xs font-semibold tracking-wider border-t border-slate-700 no-print mt-auto">
-        created by Kak Hadi
-    </footer>
+    <script>
+        const { createApp, ref, computed } = Vue;
 
-</div>
+        // SINKRONISASI GLOBAL: Ganti URL ini dengan Web App URL hasil deploy Google Apps Script Anda
+        const gscriptUrl = 'https://script.google.com/macros/s/AKfycbzi19m0_p5sa6lR02VccGeoF3mgD7sbAdcoXKBsD3VaTXoPX-iuHtu0rIUG1FLTJv8j/exec';
 
-<script>
-    const { createApp, ref, onMounted } = Vue;
+        createApp({
+            setup() {
+                const isLoggedIn = ref(false);
+                const isSaving = ref(false);
+                const userActive = ref(null);
+                const loginForm = ref({ id: '', password: '' });
+                const loginError = ref('');
+                const currentTab = ref('jadwal');
+                const pilihanCepat = ref({ golongan: 'Siaga', index: '' });
 
-    // SINKRONISASI GLOBAL: Tempel URL Web App Google Apps Script Anda di sini agar sinkron antar device
-    const gscriptUrl = https://script.google.com/macros/s/AKfycbxzn13CTPjPLqGRFzI37Nd5TA0SK85uDjI6ni87HlZnYDKEKulckV6ecmbjE5tIVFJ5Tw/exec;
+                const formJadwal = ref({
+                    tanggal: '', waktu: '14.00 - 15.30', golongan: 'Siaga', durasi: '90 Menit',
+                    materi: '', tujuan: '', kegiatan: '', alat: '', evaluasi: '', linkLKS: ''
+                });
 
-    createApp({
-        setup() {
-            const isLoggedIn = ref(false);
-            const isSaving = ref(false);
-            const userActive = ref(null);
-            const loginForm = ref({ id: '', password: '' });
-            const loginError = ref('');
-            const currentTab = ref('jadwal');
-            const pilihanCepat = ref({ golongan: 'Siaga', index: '' });
-
-            const formJadwal = ref({
-                tanggal: '', waktu: '14.00 - 15.30', golongan: 'Siaga', durasi: '90 Menit',
-                materi: '', tujuan: '', kegiatan: '', alat: '', evaluasi: '', linkLKS: ''
-            });
-
-            // 100% LENGKAP DAFTAR BANK MATERI SKU SIAGA (22 MATERI) & PENGGALANG (23 MATERI)
-            const bankMateri = {
-                Siaga: [
-                    { materi: 'Sejarah Pramuka Singkat', tujuan: 'Siaga mengenal awal mula kepanduan secara sederhana melalui kisah Baden Powell.', kegiatan: '1. Upacara Pembukaan Siaga (15m)\n2. Mendengarkan cerita sejarah kepramukaan dunia-nasional (50m)\n3. Penutupan (25m)', alat: 'Buku cerita bergambar sejarah', evaluasi: 'Tanya jawab lisan langsung' },
-                    { materi: 'Jurnal Harian', tujuan: 'Siaga mampu menuliskan/menceritakan aktivitas baik harian di lingkungan rumah.', kegiatan: '1. Pembukaan (15m)\n2. Pengisian lembar catatan harian kebaikan (Dwidarma) dipandu pembina (50m)\n3. Penutupan (25m)', alat: 'Buku jurnal saku siaga', evaluasi: 'Pemeriksaan berkala' },
-                    { materi: 'Game Pramuka', tujuan: 'Meningkatkan motorik kasar, kefokusan, dan kekompakan antar anggota barung.', kegiatan: '1. Pembukaan (15m)\n2. Pelaksanaan game "Kancil dan Rusa" serta permainan ketangkasan (55m)\n3. Penutupan (20m)', alat: 'Peluit, tali barung', evaluasi: 'Penilaian keaktifan' },
-                    { materi: 'Dwisatya dan Dwidarma', tujuan: 'Siaga memahami dan melafalkan janji/darma kode kehormatan pramuka siaga.', kegiatan: '1. Pembukaan (15m)\n2. Pengenalan janji Dwidarma dengan nyanyian bersama (50m)\n3. Penutupan (25m)', alat: 'Teks janji kehormatan', evaluasi: 'Setoran hafalan individu' },
-                    { materi: 'Jenis-jenis Salam Pramuka', tujuan: 'Dapat mempraktikkan Salam Biasa, Salam Hormat, dan Salam Janji secara sempurna.', kegiatan: '1. Pembukaan (15m)\n2. Simulasi posisi badan tegap melakukan salam pramuka (50m)\n3. Penutupan (25m)', alat: 'Atribut contoh', evaluasi: 'Uji praktik gestur tubuh' },
-                    { materi: 'Lambang Gerakan Pramuka', tujuan: 'Mengenal lambang tunas kelapa dan penciptanya.', kegiatan: '1. Pembukaan (15m)\n2. Mewarnai siluet tunas kelapa dan menyimak maknanya (50m)\n3. Penutupan (25m)', alat: 'Lembar gambar, krayon', evaluasi: 'Karya seni mewarnai' },
-                    { materi: 'Seni budaya di daerah tempat tinggalnya', tujuan: 'Mengenal lagu daerah atau tarian khas daerah tempat tinggal.', kegiatan: '1. Pembukaan (15m)\n2. Menyanyikan lagu nusantara bersama regu (50m)\n3. Penutupan (25m)', alat: 'Lirik teks lagu daerah', evaluasi: 'Kekompakan vokal' },
-                    { materi: 'Identitas diri', tujuan: 'Dapat menyebutkan biodata lengkap dan nama orang tua secara berani.', kegiatan: '1. Pembukaan (15m)\n2. Berdiri di depan barung memperkenalkan identitas pribadi (50m)\n3. Penutupan (25m)', alat: 'Papan nama', evaluasi: 'Keberanian lisan' },
-                    { materi: 'Perbuatan baik dan perbuatan buruk', tujuan: 'Mampu membedakan perbuatan positif dan menghindari tindakan buruk.', kegiatan: '1. Pembukaan (15m)\n2. Analisis gambar perilaku terpuji dan tercela di sekolah (50m)\n3. Penutupan (25m)', alat: 'Kartu gambar perilaku', evaluasi: 'Ketepatan memilah' },
-                    { materi: 'Lagu Kebangsaan Indonesia Raya', tujuan: 'Menyanyikan lagu kebangsaan secara lengkap dengan posisi hormat.', kegiatan: '1. Pembukaan (15m)\n2. Latihan vokal bersama lagu Indonesia Raya (50m)\n3. Penutupan (25m)', alat: 'Audio pemutar lagu', evaluasi: 'Sikap khidmat berdiri' },
-                    { materi: 'Warna Sang Merah Putih', tujuan: 'Mengetahui makna luhur dari bendera nasional Indonesia.', kegiatan: '1. Pembukaan (15m)\n2. Penjelasan makna warna Merah dan Putih oleh pembina (50m)\n3. Penutupan (25m)', alat: 'Bendera kain kecil', evaluasi: 'Tanya jawab lisan' },
-                    { materi: 'Hari besar nasional dan hari besar keagamaan', tujuan: 'Menyebutkan tanggal bersejarah nasional dan hari suci keagamaan.', kegiatan: '1. Pembukaan (15m)\n2. Pengisian teka-teki silang bertema hari besar (50m)\n3. Penutupan (25m)', alat: 'Lembar TTS', evaluasi: 'Ketepatan jawaban' },
-                    { materi: 'Peraturan keluarga dan lingkungan sekitar', tujuan: 'Menerapkan tata tertib sopan santun di lingkungan rumah.', kegiatan: '1. Pembukaan (15m)\n2. Roleplay berpamitan kepada orang tua (50m)\n3. Penutupan (25m)', alat: 'Skenario peran', evaluasi: 'Kessesuaian gestur' },
-                    { materi: 'Adat atau budaya di lingkungannya', tujuan: 'Menghargai tradisi tata krama lokal di area tempat tinggal.', kegiatan: '1. Pembukaan (15m)\n2. Diskusi interaktif mengenai budaya senyum, sapa, salam (50m)\n3. Penutupan (25m)', alat: 'Buku tata krama', evaluasi: 'Praktik pembiasaan' },
-                    { materi: 'Sila-sila Pancasila', tujuan: 'Menghafal 5 urutan dasar sila negara dengan lancar.', kegiatan: '1. Pembukaan (15m)\n2. Melafalkan teks Pancasila bersama (50m)\n3. Penutupan (25m)', alat: 'Papan lambang Pancasila', evaluasi: 'Kelancaran hafalan' },
-                    { materi: 'Pertolongan pertama pada kecelakaan', tujuan: 'Mampu mengobati luka lecet kecil secara mandiri.', kegiatan: '1. Pembukaan (15m)\n2. Praktik pembersihan luka dengan antiseptik dan plester (50m)\n3. Penutupan (25m)', alat: 'Kotak P3K, plester luka', evaluasi: 'Teknik balut luka' },
-                    { materi: 'Jam digital dan analog', tujuan: 'Dapat membaca letak jarum jam dinding dengan tepat.', kegiatan: '1. Pembukaan (15m)\n2. Simulasi penentuan waktu jam analog (50m)\n3. Penutupan (25m)', alat: 'Model jam kertas', evaluasi: 'Ketepatan membaca' },
-                    { materi: '4 arah mata angin', tujuan: 'Mengetahui arah Barat, Utara, Timur, dan Selatan.', kegiatan: '1. Pembukaan (15m)\n2. Game tunjuk arah mata angin secara acak (50m)\n3. Penutupan (25m)', alat: 'Kompas saku', evaluasi: 'Kecepatan respons' },
-                    { materi: 'Tanaman berguna atau satu jenis binatang ternak', tujuan: 'Menyebutkan manfaat tanaman sekitar atau jenis hewan peliharaan.', kegiatan: '1. Pembukaan (15m)\n2. Observasi lapangan taman sekolah mencatat jenis tanaman obat (50m)\n3. Penutupan (25m)', alat: 'Taman pangkalan', evaluasi: 'Laporan observasi' },
-                    { materi: 'Kertas yang dibentuk menyerupai pesawat, kapal, flora dan fauna', tujuan: 'Membuat hasta karya seni melipat kertas dasar origami.', kegiatan: '1. Pembukaan (15m)\n2. Membuat kreasi burung dan kapal dari kertas lipat (50m)\n3. Penutupan (25m)', alat: 'Kertas lipat origami', evaluasi: 'Kerapian hasil' },
-                    { materi: '4 Sehat 5 Sempurna', tujuan: 'Memahami susunan menu gizi seimbang harian.', kegiatan: '1. Pembukaan (15m)\n2. Mengelompokkan jenis lauk, buah, sayur secara berkelompok (50m)\n3. Penutupan (25m)', alat: 'Gambar komoditas pangan', evaluasi: 'Ketepatan susunan' },
-                    { materi: 'Simpul mati, simpul hidup, simpul anyam, simpul pangkal dan simpul jangkar', tujuan: 'Mahir merajut 5 ikatan simpul dasar kepanduan siaga.', kegiatan: '1. Pembukaan (15m)\n2. Latihan ikatan tali berulang berpasangan (50m)\n3. Penutupan (25m)', alat: 'Tali pramuka 2 meter', evaluasi: 'Kebenaran hasil simpul' }
-                ],
-                Penggalang: [
-                    { materi: 'Sejarah Pramuka Indonesia', tujuan: 'Penggalang memahami urutan peristiwa lahirnya Gerakan Pramuka nasional.', kegiatan: '1. Pembukaan (15m)\n2. Pemaparan infografis sejarah lahirnya pandu nasional (50m)\n3. Penutupan (25m)', alat: 'Bagan linimasa sejarah', evaluasi: 'Kuis tertulis' },
-                    { materi: 'Sejarah Pramuka Dunia', tujuan: 'Mengetahui biografi Lord Baden Powell dan sejarah kepanduan global.', kegiatan: '1. Pembukaan (15m)\n2. Penjelasan kisah hidup bapak pandu dunia di Brownsea (50m)\n3. Penutupan (25m)', alat: 'Buku literatur kepanduan', evaluasi: 'Resume ringkasan' },
-                    { materi: 'Game Pramuka', tujuan: 'Melatih jiwa kepemimpinan, kerja sama tim, dan ketangkasan fisik.', kegiatan: '1. Pembukaan (15m)\n2. Kompetisi permainan lapangan "Arung Jeram Darurat" (55m)\n3. Penutupan (20m)', alat: 'Tongkat, tali regu', evaluasi: 'Penilaian kerja sama' },
-                    { materi: 'Praktek Musyawarah Sederhana', tujuan: 'Mampu melakukan pengambilan keputusan regu melalui voting/mufakat.', kegiatan: '1. Pembukaan (15m)\n2. Simulasi rapat regu menyusun jadwal piket berkemah (55m)\n3. Penutupan (20m)', alat: 'Buku catatan sidang', evaluasi: 'Ketertiban forum' },
-                    { materi: 'Manfaat dari penghijauan', tujuan: 'Memahami pentingnya reboisasi dan fungsi sirkulasi oksigen tanaman.', kegiatan: '1. Pembukaan (15m)\n2. Aksi penanaman pohon hias atau apotek hidup di sekolah (55m)\n3. Penutupan (20m)', alat: 'Bibit tanaman, sekop', evaluasi: 'Aktivitas fisik' },
-                    { materi: 'Hak perlindungan anak', tujuan: 'Mengetahui hak dasar anak (aman, edukasi, bebas perundungan).', kegiatan: '1. Pembukaan (15m)\n2. Penyuluhan interaktif mengenai pencegahan bullying (55m)\n3. Penutupan (20m)', alat: 'Poster anti-bullying', evaluasi: 'Solusi kasus' },
-                    { materi: 'Tanda-tanda pengenal Gerakan Pramuka sesuai dengan golongan dan tingkatannya', tujuan: 'Mampu menempatkan atribut umum, satuan, dan jabatan pada seragam.', kegiatan: '1. Pembukaan (15m)\n2. Bedah seragam penggalang dan lokasi penempatan lencana (55m)\n3. Penutupan (20m)', alat: 'Atribut lengkap seragam', evaluasi: 'Ketepatan posisi' },
-                    { materi: 'Kode Kehormatan Pramuka Penggalang', tujuan: 'Menghafal dan mengamalkan isi janji Trisatya serta Dasadarma.', kegiatan: '1. Pembukaan (15m)\n2. Pembacaan dan perenungan implementasi 10 Dasadarma (55m)\n3. Penutupan (20m)', alat: 'Teks Dasadarma', evaluasi: 'Kelancaran hafalan' },
-                    { materi: 'Salam Pramuka, Motto, dan Arti Lambang Gerakan Pramuka', tujuan: 'Dapat menguraikan motto gerakan pramuka beserta arti kiasan tunas kelapa.', kegiatan: '1. Pembukaan (15m)\n2. Pemaparan filosofi buah kelapa serbaguna oleh Pembina (55m)\n3. Penutupan (20m)', alat: 'Modul kiasan dasar', evaluasi: 'Pemahaman lisan' },
-                    { materi: 'Sejarah dan kiasan warna serta cara menggunakan bendera merah putih', tujuan: 'Mengetahui tata cara pelipatan dan penghormatan bendera kebangsaan.', kegiatan: '1. Pembukaan (15m)\n2. Praktik formasi lipat delapan bendera upacara resmi (55m)\n3. Penutupan (20m)', alat: 'Bendera merah putih kain', evaluasi: 'Kerapian lipatan' },
-                    { materi: '2 lagu wajib Nasional dan 1 lagu daerah nusantara', tujuan: 'Dapat menyanyikan lagu wajib dengan tempo dan vokal harmoni yang tepat.', kegiatan: '1. Pembukaan (15m)\n2. Paduan suara regu menyanyikan lagu nasional pilihan (55m)\n3. Penutupan (20m)', alat: 'Buku teks lagu nasional', evaluasi: 'Kelarasan intonasi' },
-                    { materi: 'Sejarah dan Makna Lambang Negara RI', tujuan: 'Memahami arti jumlah bulu garuda pancasila.', kegiatan: '1. Pembukaan (15m)\n2. Mengidentifikasi jumlah bulu pada sayap, ekor, leher garuda (55m)\n3. Penutupan (20m)', alat: 'Gambar Garuda Pancasila', evaluasi: 'Tes objektif tertulis' },
-                    { materi: 'Teknologi Tepat Guna', tujuan: 'Mampu merakit perangkat fungsional sederhana pembersih sampah.', kegiatan: '1. Pembukaan (15m)\n2. Membuat sapu lidi kreasi dari limbah botol plastik bekas (55m)\n3. Penutupan (20m)', alat: 'Botol plastik, gunting, bambu', evaluasi: 'Uji fungsi kerja' },
-                    { materi: 'Mengenal, memilah sampah dan Praktek pengolahaan limbah sampah dengan eco brik dan kompos.', tujuan: 'Mampu memadatkan limbah plastik kering menjadi ecobrick.', kegiatan: '1. Pembukaan (15m)\n2. Aksi pemilahan sampah pangkalan dilanjutkan pengisian botol (55m)\n3. Penutupan (20m)', alat: 'Sampah plastik, botol kosong, stik', evaluasi: 'Kepadatan botol' },
-                    { materi: 'Teknik penjernihan air', tujuan: 'Membuat filter penyaringan air keruh menjadi jernih.', kegiatan: '1. Pembukaan (15m)\n2. Menyusun lapisan ijuk, pasir, arang, kerikil ke dalam botol filter (55m)\n3. Penutupan (20m)', alat: 'Botol, arang, pasir, ijuk', evaluasi: 'Kejernihan air akhir' },
-                    { materi: 'Simpul mati, simpul hidup, simpul anyam, simpul tiang, simpul pangkal dan menyambung tali', tujuan: 'Menguasai 6 teknik simpul dasar kepanduan.', kegiatan: '1. Pembukaan (15m)\n2. Uji ketangkasan tali-temali perorangan dibatasi durasi waktu (55m)\n3. Penutupan (20m)', alat: 'Utas tali pramuka', evaluasi: 'Kecepatan simpul' },
-                    { materi: 'Pionering : Membuat Jemuran sederhana', tujuan: 'Mendirikan struktur jemuran pakaian portabel menggunakan 4 tongkat.', kegiatan: '1. Pembukaan (15m)\n2. Kerja sama regu merakit pionering jemuran tali silang (55m)\n3. Penutupan (20m)', alat: 'Tongkat bambu, tali kepanduan', evaluasi: 'Kekokohan bangunan' },
-                    { materi: 'Praktek P3K dan pembuatan tandu.', tujuan: 'Dapat merakit tandu darurat dan membalut luka patah tulang.', kegiatan: '1. Pembukaan (15m)\n2. Simulasi evakuasi korban cedera menggunakan tandu rakitan regu (55m)\n3. Penutupan (20m)', alat: '2 Tongkat panjang, tali, mitela', evaluasi: 'Kekuatan tandu' },
-                    { materi: 'Kompas, menaksir tinggi dan lebar', tujuan: 'Mampu menghitung estimasi tinggi pohon menggunakan perbandingan bayangan.', kegiatan: '1. Pembukaan (15m)\n2. Praktik pengukuran lapangan menaksir tinggi tiang bendera (55m)\n3. Penutupan (20m)', alat: 'Tongkat bantu, kompas bidik', evaluasi: 'Akurasi hasil' },
-                    { materi: 'Macam-macam sandi, morse dan semaphore', tujuan: 'Mampu mengirim dan menerima pesan visual semaphore.', kegiatan: '1. Pembukaan (15m)\n2. Game kirim tebak kata sandi semaphore antar pos terpisah (55m)\n3. Penutupan (20m)', alat: 'Bendera semaphore, pluit', evaluasi: 'Ketepatan translasi' },
-                    { materi: 'Baris-berbaris dan Kolonel Tongkat.', tujuan: 'Menguasai gerakan dasar PBB variasi memegang tongkat penggalang.', kegiatan: '1. Pembukaan (15m)\n2. Latihan keseragaman baris berbaris bersenjata tongkat (55m)\n3. Penutupan (20m)', alat: 'Tongkat pramuka lengkap', evaluasi: 'Keselarasan tempo' },
-                    { materi: 'Hasta Karya.', tujuan: 'Membuat kerajinan tangan bernilai guna dari bahan daur ulang.', kegiatan: '1. Pembukaan (15m)\n2. Membuat kotak pensil hias dari stik es krim/kardus bekas (55m)\n3. Penutupan (20m)', alat: 'Stik es krim, lem tembak', evaluasi: 'Nilai estetika karya' },
-                    { materi: 'Jejak Peta', tujuan: 'Mampu membaca tanda jejak ranting/batu serta menggambar peta perjalanan.', kegiatan: '1. Pembukaan (15m)\n2. Penjelajahan lapangan (wide game) menyusuri tanda jejak rahasia (55m)\n3. Penutupan (20m)', alat: 'Kertas peta, tanda alam', evaluasi: 'Ketepatan tiba' }
-                ]
-            };
-
-            // 100% LENGKAP DAFTAR 12 AKUN PEMBINA ASLI (KAK HAMIDI ADALAH KMD)
-            const dataUser = [
-                { id: 'hamidi', pass: '123456789', nama: "Ka' Hamidi", kualifikasi: 'KMD' },
-                { id: 'bellamonalisa', pass: '123456789', nama: "Ka' Bella Monalista", kualifikasi: 'KMD' },
-                { id: 'nurfitri', pass: '123456789', nama: "Ka' Nur Fitri", kualifikasi: 'KMD' },
-                { id: 'yulpiana', pass: '123456789', nama: "Ka' Yulpiana Ismaniar", kualifikasi: 'KMD' },
-                { id: 'nuraini', pass: '123456789', nama: "Ka' Nur Aini", kualifikasi: 'KMD' },
-                { id: 'aprillia', pass: '123456789', nama: "Ka' Aprillia Muhammad Qoirunnisa", kualifikasi: 'KMD' },
-                { id: 'muhammadsalim', pass: '123456789', nama: "Ka' Muhammad Salim", kualifikasi: 'KMD' },
-                { id: 'aliakbar', pass: '123456789', nama: "Ka' Ali Akbar", kualifikasi: '-' },
-                { id: 'vickymaulana', pass: '123456789', nama: "Ka' Vicky Maulana", kualifikasi: 'KMD' },
-                { id: 'muhammadhadianto', pass: '123456789', nama: "Ka' Muhammad Hadianto", kualifikasi: 'KML' },
-                { id: 'muhammadfahlevi', pass: '123456789', nama: "Ka' Muhammad Fahlevi", kualifikasi: 'KMD' },
-                { id: 'admin01', pass: '123456789', nama: "Admin Gudep", kualifikasi: '-' }
-            ];
-
-            // 100% LENGKAP DATA PANGKATAN TERTULIS
-            const pengaturan = ref({
-                namaPangkalan: 'SDIT Kaffah Islamic School', 
-                NomerGudep: '04.515 - 04.516',
-                alamatSekolah: 'Jl. Pramuka Gg. H. Murtadho XVI A No. 549 Kelurahan Paseban Kecamatan Senen Jakarta Pusat 10440',
-                telepon: '(021) 29924450', 
-                email: 'admin@kaffahislamic.sch.id', 
-                kota: 'Jakarta Pusat', 
-                tahunAjaran: '2026 - 2027', 
-                namaMabigus: "Ka' Muslih Heriyanto"
-            });
-
-            const daftarJadwal = ref([]);
-            const rppTerpilih = ref({});
-
-            const loadDataOnline = async () => {
-                if(gscriptUrl.includes(https://script.google.com/macros/s/AKfycbxzn13CTPjPLqGRFzI37Nd5TA0SK85uDjI6ni87HlZnYDKEKulckV6ecmbjE5tIVFJ5Tw/exec)) return;
-                try {
-                    const response = await fetch(gscriptUrl);
-                    const data = await response.json();
-                    daftarJadwal.value = data.reverse(); 
-                } catch (error) {
-                    console.error("Gagal sinkronisasi data cloud:", error);
-                }
-            };
-
-            const handleLogin = () => {
-                const user = dataUser.find(u => u.id === loginForm.value.id.trim().toLowerCase() && u.pass === loginForm.value.password);
-                if (user) {
-                    isLoggedIn.value = true;
-                    userActive.value = { id: user.id, NamaPembina: user.nama, Kualifikasi: user.kualifikasi };
-                    loadDataOnline();
-                    setInterval(loadDataOnline, 10000); // Sinkronisasi otomatis berkala setiap 10 detik
-                } else {
-                    loginError.value = 'ID Pembina atau Password Anda salah!';
-                }
-            };
-
-            const tambahJadwal = async () => {
-                if(gscriptUrl.includes(https://script.google.com/macros/s/AKfycbxzn13CTPjPLqGRFzI37Nd5TA0SK85uDjI6ni87HlZnYDKEKulckV6ecmbjE5tIVFJ5Tw/exec)) {
-                    alert("Aplikasi berjalan dalam mode lokal. Hubungkan ke Google Apps Script Anda untuk sinkronisasi antar-device.");
-                    return;
-                }
-                isSaving.value = true;
-                const itemBaru = {
-                    tanggal: formJadwal.value.tanggal, waktu: formJadwal.value.waktu,
-                    pembina: userActive.value.NamaPembina, golongan: formJadwal.value.golongan,
-                    durasi: formJadwal.value.durasi, materi: formJadwal.value.materi,
-                    tujuan: formJadwal.value.tujuan, kegiatan: formJadwal.value.kegiatan,
-                    alat: formJadwal.value.alat, evaluasi: formJadwal.value.evaluasi,
-                    linkLKS: formJadwal.value.linkLKS.trim()
+                // 100% LENGKAP DAFTAR BANK MATERI SKU SIAGA (22 MATERI) & PENGGALANG (23 MATERI)
+                const bankMateri = {
+                    Siaga: [
+                        { materi: 'Sejarah Pramuka Singkat', tujuan: 'Siaga mengenal awal mula kepanduan secara sederhana melalui kisah Baden Powell.', kegiatan: '1. Upacara Pembukaan Siaga (15m)\n2. Mendengarkan cerita sejarah kepramukaan dunia-nasional (50m)\n3. Penutupan (25m)', alat: 'Buku cerita bergambar sejarah', evaluasi: 'Tanya jawab lisan langsung' },
+                        { materi: 'Jurnal Harian', tujuan: 'Siaga mampu menuliskan/menceritakan aktivitas baik harian di lingkungan rumah.', kegiatan: '1. Pembukaan (15m)\n2. Pengisian lembar catatan harian kebaikan (Dwidarma) dipandu pembina (50m)\n3. Penutupan (25m)', alat: 'Buku jurnal saku siaga', evaluasi: 'Pemeriksaan berkala' },
+                        { materi: 'Game Pramuka', tujuan: 'Meningkatkan motorik kasar, kefokusan, dan kekompakan antar anggota barung.', kegiatan: '1. Pembukaan (15m)\n2. Pelaksanaan game "Kancil dan Rusa" serta permainan ketangkasan (55m)\n3. Penutupan (20m)', alat: 'Peluit, tali barung', evaluasi: 'Penilaian keaktifan' },
+                        { materi: 'Dwisatya dan Dwidarma', tujuan: 'Siaga memahami dan melafalkan janji/darma kode kehormatan pramuka siaga.', kegiatan: '1. Pembukaan (15m)\n2. Pengenalan janji Dwidarma dengan nyanyian bersama (50m)\n3. Penutupan (25m)', alat: 'Teks janji kehormatan', evaluasi: 'Setoran hafalan individu' },
+                        { materi: 'Jenis-jenis Salam Pramuka', tujuan: 'Dapat mempraktikkan Salam Biasa, Salam Hormat, dan Salam Janji secara sempurna.', kegiatan: '1. Pembukaan (15m)\n2. Simulasi posisi badan tegap melakukan salam pramuka (50m)\n3. Penutupan (25m)', alat: 'Atribut contoh', evaluasi: 'Uji praktik gestur tubuh' },
+                        { materi: 'Lambang Gerakan Pramuka', tujuan: 'Mengenal lambang tunas kelapa dan penciptanya.', kegiatan: '1. Pembukaan (15m)\n2. Mewarnai siluet tunas kelapa dan menyimak maknanya (50m)\n3. Penutupan (25m)', alat: 'Lembar gambar, krayon', evaluasi: 'Karya seni mewarnai' },
+                        { materi: 'Seni budaya di daerah tempat tinggalnya', tujuan: 'Mengenal lagu daerah atau tarian khas daerah tempat tinggal.', kegiatan: '1. Pembukaan (15m)\n2. Menyanyikan lagu nusantara bersama regu (50m)\n3. Penutupan (25m)', alat: 'Lirik teks lagu daerah', evaluasi: 'Kekompakan vokal' },
+                        { materi: 'Identitas diri', tujuan: 'Dapat menyebutkan biodata lengkap dan nama orang tua secara berani.', kegiatan: '1. Pembukaan (15m)\n2. Berdiri di depan barung memperkenalkan identitas pribadi (50m)\n3. Penutupan (25m)', alat: 'Papan nama', evaluasi: 'Keberanian lisan' },
+                        { materi: 'Perbuatan baik dan perbuatan buruk', tujuan: 'Mampu membedakan perbuatan positif dan menghindari tindakan buruk.', kegiatan: '1. Pembukaan (15m)\n2. Analisis gambar perilaku terpuji dan tercela di sekolah (50m)\n3. Penutupan (25m)', alat: 'Kartu gambar perilaku', evaluasi: 'Ketepatan memilah' },
+                        { materi: 'Lagu Kebangsaan Indonesia Raya', tujuan: 'Menyanyikan lagu kebangsaan secara lengkap dengan posisi hormat.', kegiatan: '1. Pembukaan (15m)\n2. Latihan vokal bersama lagu Indonesia Raya (50m)\n3. Penutupan (25m)', alat: 'Audio pemutar lagu', evaluasi: 'Sikap khidmat berdiri' },
+                        { materi: 'Warna Sang Merah Putih', tujuan: 'Mengetahui makna luhur dari bendera nasional Indonesia.', kegiatan: '1. Pembukaan (15m)\n2. Penjelasan makna warna Merah dan Putih oleh pembina (50m)\n3. Penutupan (25m)', alat: 'Bendera kain kecil', evaluasi: 'Tanya jawab lisan' },
+                        { materi: 'Hari besar nasional dan hari besar keagamaan', tujuan: 'Menyebutkan tanggal bersejarah nasional dan hari suci keagamaan.', kegiatan: '1. Pembukaan (15m)\n2. Pengisian teka-teki silang bertema hari besar (50m)\n3. Penutupan (25m)', alat: 'Lembar TTS', evaluasi: 'Ketepatan jawaban' },
+                        { materi: 'Peraturan keluarga dan lingkungan sekitar', tujuan: 'Menerapkan tata tertib sopan santun di lingkungan rumah.', kegiatan: '1. Pembukaan (15m)\n2. Roleplay berpamitan kepada orang tua (50m)\n3. Penutupan (25m)', alat: 'Skenario peran', evaluasi: 'Kessesuaian gestur' },
+                        { materi: 'Adat atau budaya di lingkungannya', tujuan: 'Menghargai tradisi tata krama lokal di area tempat tinggal.', kegiatan: '1. Pembukaan (15m)\n2. Diskusi interaktif mengenai budaya senyum, sapa, salam (50m)\n3. Penutupan (25m)', alat: 'Buku tata krama', evaluasi: 'Praktik pembiasaan' },
+                        { materi: 'Sila-sila Pancasila', tujuan: 'Menghafal 5 urutan dasar sila negara dengan lancar.', kegiatan: '1. Pembukaan (15m)\n2. Melafalkan teks Pancasila bersama (50m)\n3. Penutupan (25m)', alat: 'Papan lambang Pancasila', evaluasi: 'Kelancaran hafalan' },
+                        { materi: 'Pertolongan pertama pada kecelakaan', tujuan: 'Mampu mengobati luka lecet kecil secara mandiri.', kegiatan: '1. Pembukaan (15m)\n2. Praktik pembersihan luka dengan antiseptik dan plester (50m)\n3. Penutupan (25m)', alat: 'Kotak P3K, plester luka', evaluasi: 'Teknik balut luka' },
+                        { materi: 'Jam digital dan analog', tujuan: 'Dapat membaca letak jarum jam dinding dengan tepat.', kegiatan: '1. Pembukaan (15m)\n2. Simulasi penentuan waktu jam analog (50m)\n3. Penutupan (25m)', alat: 'Model jam kertas', evaluasi: 'Ketepatan membaca' },
+                        { materi: '4 arah mata angin', tujuan: 'Mengetahui arah Barat, Utara, Timur, dan Selatan.', kegiatan: '1. Pembukaan (15m)\n2. Game tunjuk arah mata angin secara acak (50m)\n3. Penutupan (25m)', alat: 'Kompas saku', evaluasi: 'Kecepatan respons' },
+                        { materi: 'Tanaman berguna atau satu jenis binatang ternak', tujuan: 'Menyebutkan manfaat tanaman sekitar atau jenis hewan peliharaan.', kegiatan: '1. Pembukaan (15m)\n2. Observasi lapangan taman sekolah mencatat jenis tanaman obat (50m)\n3. Penutupan (25m)', alat: 'Taman pangkalan', evaluasi: 'Laporan observasi' },
+                        { materi: 'Kertas yang dibentuk menyerupai pesawat, kapal, flora dan fauna', tujuan: 'Membuat hasta karya seni melipat kertas dasar origami.', kegiatan: '1. Pembukaan (15m)\n2. Membuat kreasi burung dan kapal dari kertas lipat (50m)\n3. Penutupan (25m)', alat: 'Kertas lipat origami', evaluasi: 'Kerapian hasil' },
+                        { materi: '4 Sehat 5 Sempurna', tujuan: 'Memahami susunan menu gizi seimbang harian.', kegiatan: '1. Pembukaan (15m)\n2. Mengelompokkan jenis lauk, buah, sayur secara berkelompok (50m)\n3. Penutupan (25m)', alat: 'Gambar komoditas pangan', evaluasi: 'Ketepatan susunan' },
+                        { materi: 'Simpul mati, simpul hidup, simpul anyam, simpul pangkal dan simpul jangkar', tujuan: 'Mahir merajut 5 ikatan simpul dasar kepanduan siaga.', kegiatan: '1. Pembukaan (15m)\n2. Latihan ikatan tali berulang berpasangan (50m)\n3. Penutupan (25m)', alat: 'Tali pramuka 2 meter', evaluasi: 'Kebenaran hasil simpul' }
+                    ],
+                    Penggalang: [
+                        { materi: 'Sejarah Pramuka Indonesia', tujuan: 'Penggalang memahami urutan peristiwa lahirnya Gerakan Pramuka nasional.', kegiatan: '1. Pembukaan (15m)\n2. Pemaparan infografis sejarah lahirnya pandu nasional (50m)\n3. Penutupan (25m)', alat: 'Bagan linimasa sejarah', evaluasi: 'Kuis tertulis' },
+                        { materi: 'Sejarah Pramuka Dunia', tujuan: 'Mengetahui biografi Lord Baden Powell dan sejarah kepanduan global.', kegiatan: '1. Pembukaan (15m)\n2. Penjelasan kisah hidup bapak pandu dunia di Brownsea (50m)\n3. Penutupan (25m)', alat: 'Buku literatur kepanduan', evaluasi: 'Resume ringkasan' },
+                        { materi: 'Game Pramuka', tujuan: 'Melatih jiwa kepemimpinan, kerja sama tim, dan ketangkasan fisik.', kegiatan: '1. Pembukaan (15m)\n2. Kompetisi permainan lapangan "Arung Jeram Darurat" (55m)\n3. Penutupan (20m)', alat: 'Tongkat, tali regu', evaluasi: 'Penilaian kerja sama' },
+                        { materi: 'Praktek Musyawarah Sederhana', tujuan: 'Mampu melakukan pengambilan keputusan regu melalui voting/mufakat.', kegiatan: '1. Pembukaan (15m)\n2. Simulasi rapat regu menyusun jadwal piket berkemah (55m)\n3. Penutupan (20m)', alat: 'Buku catatan sidang', evaluasi: 'Ketertiban forum' },
+                        { materi: 'Manfaat dari penghijauan', tujuan: 'Memahami pentingnya reboisasi dan fungsi sirkulasi oksigen tanaman.', kegiatan: '1. Pembukaan (15m)\n2. Aksi penanaman pohon hias atau apotek hidup di sekolah (55m)\n3. Penutupan (20m)', alat: 'Bibit tanaman, sekop', evaluasi: 'Aktivitas fisik' },
+                        { materi: 'Hak perlindungan anak', tujuan: 'Mengetahui hak dasar anak (aman, edukasi, bebas perundungan).', kegiatan: '1. Pembukaan (15m)\n2. Penyuluhan interaktif mengenai pencegahan bullying (55m)\n3. Penutupan (20m)', alat: 'Poster anti-bullying', evaluasi: 'Solusi kasus' },
+                        { materi: 'Tanda-tanda pengenal Gerakan Pramuka sesuai dengan golongan dan tingkatannya', tujuan: 'Mampu menempatkan atribut umum, satuan, dan jabatan pada seragam.', kegiatan: '1. Pembukaan (15m)\n2. Bedah seragam penggalang dan lokasi penempatan lencana (55m)\n3. Penutupan (20m)', alat: 'Atribut lengkap seragam', evaluasi: 'Ketepatan posisi' },
+                        { materi: 'Kode Kehormatan Pramuka Penggalang', tujuan: 'Menghafal dan mengamalkan isi janji Trisatya serta Dasadarma.', kegiatan: '1. Pembukaan (15m)\n2. Pembacaan dan perenungan implementasi 10 Dasadarma (55m)\n3. Penutupan (20m)', alat: 'Teks Dasadarma', evaluasi: 'Kelancaran hafalan' },
+                        { materi: 'Salam Pramuka, Motto, dan Arti Lambang Gerakan Pramuka', tujuan: 'Dapat menguraikan motto gerakan pramuka beserta arti kiasan tunas kelapa.', kegiatan: '1. Pembukaan (15m)\n2. Pemaparan filosofi buah kelapa serbaguna oleh Pembina (55m)\n3. Penutupan (20m)', alat: 'Modul kiasan dasar', evaluasi: 'Pemahaman lisan' },
+                        { materi: 'Sejarah dan kiasan warna serta cara menggunakan bendera merah putih', tujuan: 'Mengetahui tata cara pelipatan dan penghormatan bendera kebangsaan.', kegiatan: '1. Pembukaan (15m)\n2. Praktik formasi lipat delapan bendera upacara resmi (55m)\n3. Penutupan (20m)', alat: 'Bendera merah putih kain', evaluasi: 'Kerapian lipatan' },
+                        { materi: '2 lagu wajib Nasional dan 1 lagu daerah nusantara', tujuan: 'Dapat menyanyikan lagu wajib dengan tempo dan vokal harmoni yang tepat.', kegiatan: '1. Pembukaan (15m)\n2. Paduan suara regu menyanyikan lagu nasional pilihan (55m)\n3. Penutupan (20m)', alat: 'Buku teks lagu nasional', evaluasi: 'Kelarasan intonasi' },
+                        { materi: 'Sejarah dan Makna Lambang Negara RI', tujuan: 'Memahami arti jumlah bulu garuda pancasila.', kegiatan: '1. Pembukaan (15m)\n2. Mengidentifikasi jumlah bulu pada sayap, ekor, leher garuda (55m)\n3. Penutupan (20m)', alat: 'Gambar Garuda Pancasila', evaluasi: 'Tes objektif tertulis' },
+                        { materi: 'Teknologi Tepat Guna', tujuan: 'Mampu merakit perangkat fungsional sederhana pembersih sampah.', kegiatan: '1. Pembukaan (15m)\n2. Membuat sapu lidi kreasi dari limbah botol plastik bekas (55m)\n3. Penutupan (20m)', alat: 'Botol plastik, gunting, bambu', evaluasi: 'Uji fungsi kerja' },
+                        { materi: 'Mengenal, memilah sampah dan Praktek pengolahaan limbah sampah dengan eco brik dan kompos.', tujuan: 'Mampu memadatkan limbah plastik kering menjadi ecobrick.', kegiatan: '1. Pembukaan (15m)\n2. Aksi pemilahan sampah pangkalan dilanjutkan pengisian botol (55m)\n3. Penutupan (20m)', alat: 'Sampah plastik, botol kosong, stik', evaluasi: 'Kepadatan botol' },
+                        { materi: 'Teknik penjernihan air', tujuan: 'Membuat filter penyaringan air keruh menjadi jernih.', kegiatan: '1. Pembukaan (15m)\n2. Menyusun lapisan ijuk, pasir, arang, kerikil ke dalam botol filter (55m)\n3. Penutupan (20m)', alat: 'Botol, arang, pasir, ijuk', evaluasi: 'Kejernihan air akhir' },
+                        { materi: 'Simpul mati, simpul hidup, simpul anyam, simpul tiang, simpul pangkal dan menyambung tali', tujuan: 'Menguasai 6 teknik simpul dasar kepanduan.', kegiatan: '1. Pembukaan (15m)\n2. Uji ketangkasan tali-temali perorangan dibatasi durasi waktu (55m)\n3. Penutupan (20m)', alat: 'Utas tali pramuka', evaluasi: 'Kecepatan simpul' },
+                        { materi: 'Pionering : Membuat Jemuran sederhana', tujuan: 'Mendirikan struktur jemuran pakaian portabel menggunakan 4 tongkat.', kegiatan: '1. Pembukaan (15m)\n2. Kerja sama regu merakit pionering jemuran tali silang (55m)\n3. Penutupan (20m)', alat: 'Tongkat bambu, tali kepanduan', evaluasi: 'Kekokohan bangunan' },
+                        { materi: 'Praktek P3K dan pembuatan tandu.', tujuan: 'Dapat merakit tandu darurat dan membalut luka patah tulang.', kegiatan: '1. Pembukaan (15m)\n2. Simulasi evakuasi korban cedera menggunakan tandu rakitan regu (55m)\n3. Penutupan (20m)', alat: '2 Tongkat panjang, tali, mitela', evaluasi: 'Kekuatan tandu' },
+                        { materi: 'Kompas, menaksir tinggi dan lebar', tujuan: 'Mampu menghitung estimasi tinggi pohon menggunakan perbandingan bayangan.', kegiatan: '1. Pembukaan (15m)\n2. Praktik pengukuran lapangan menaksir tinggi tiang bendera (55m)\n3. Penutupan (20m)', alat: 'Tongkat bantu, kompas bidik', evaluasi: 'Akurasi hasil' },
+                        { materi: 'Macam-macam sandi, morse dan semaphore', tujuan: 'Mampu mengirim dan menerima pesan visual semaphore.', kegiatan: '1. Pembukaan (15m)\n2. Game kirim tebak kata sandi semaphore antar pos terpisah (55m)\n3. Penutupan (20m)', alat: 'Bendera semaphore, pluit', evaluasi: 'Ketepatan translasi' },
+                        { materi: 'Baris-berbaris dan Kolonel Tongkat.', tujuan: 'Menguasai gerakan dasar PBB variasi memegang tongkat penggalang.', kegiatan: '1. Pembukaan (15m)\n2. Latihan keseragaman baris berbaris bersenjata tongkat (55m)\n3. Penutupan (20m)', alat: 'Tongkat pramuka lengkap', evaluasi: 'Keselarasan tempo' },
+                        { materi: 'Hasta Karya.', tujuan: 'Membuat kerajinan tangan bernilai guna dari bahan daur ulang.', kegiatan: '1. Pembukaan (15m)\n2. Membuat kotak pensil hias dari stik es krim/kardus bekas (55m)\n3. Penutupan (20m)', alat: 'Stik es krim, lem tembak', evaluasi: 'Nilai estetika karya' },
+                        { materi: 'Jejak Peta', tujuan: 'Mampu membaca tanda jejak ranting/batu serta menggambar peta perjalanan.', kegiatan: '1. Pembukaan (15m)\n2. Penjelajahan lapangan (wide game) menyusuri tanda jejak rahasia (55m)\n3. Penutupan (20m)', alat: 'Kertas peta, tanda alam', evaluasi: 'Ketepatan tiba' }
+                    ]
                 };
 
-                try {
-                    await fetch(gscriptUrl, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(itemBaru)
-                    });
-                    
-                    alert('Berhasil tersimpan ke cloud global terpadu!');
-                    formJadwal.value = {
-                        tanggal: '', waktu: '14.00 - 15.30', golongan: 'Siaga', durasi: '90 Menit',
-                        materi: '', tujuan: '', kegiatan: '', alat: '', evaluasi: '', linkLKS: ''
+                // 100% LENGKAP DAFTAR 12 AKUN PEMBINA ASLI (KAK HAMIDI ADALAH KMD)
+                const dataUser = [
+                    { id: 'hamidi', pass: '123456789', nama: "Ka' Hamidi", kualifikasi: 'KMD' },
+                    { id: 'bellamonalisa', pass: '123456789', nama: "Ka' Bella Monalista", kualifikasi: 'KMD' },
+                    { id: 'nurfitri', pass: '123456789', nama: "Ka' Nur Fitri", kualifikasi: 'KMD' },
+                    { id: 'yulpiana', pass: '123456789', nama: "Ka' Yulpiana Ismaniar", kualifikasi: 'KMD' },
+                    { id: 'nuraini', pass: '123456789', nama: "Ka' Nur Aini", kualifikasi: 'KMD' },
+                    { id: 'aprillia', pass: '123456789', nama: "Ka' Aprillia Muhammad Qoirunnisa", kualifikasi: 'KMD' },
+                    { id: 'muhammadsalim', pass: '123456789', nama: "Ka' Muhammad Salim", kualifikasi: 'KMD' },
+                    { id: 'aliakbar', pass: '123456789', nama: "Ka' Ali Akbar", kualifikasi: '-' },
+                    { id: 'vickymaulana', pass: '123456789', nama: "Ka' Vicky Maulana", kualifikasi: 'KMD' },
+                    { id: 'muhammadhadianto', pass: '123456789', nama: "Ka' Muhammad Hadianto", kualifikasi: 'KML' },
+                    { id: 'muhammadfahlevi', pass: '123456789', nama: "Ka' Muhammad Fahlevi", kualifikasi: 'KMD' },
+                    { id: 'admin01', pass: '123456789', nama: "Admin Gudep", kualifikasi: '-' }
+                ];
+
+                // 100% LENGKAP DATA PANGKATAN TERTULIS
+                const pengaturan = ref({
+                    namaPangkalan: 'SDIT Kaffah Islamic School',
+                    NomerGudep: '04.515 - 04.516',
+                    alamatSekolah: 'Jl. Pramuka Gg. H. Murtadho XVI A No. 549 Kelurahan Paseban Kecamatan Senen Jakarta Pusat 10440',
+                    telepon: '(021) 29924450',
+                    email: 'admin@kaffahislamic.sch.id',
+                    kota: 'Jakarta Pusat',
+                    tahunAjaran: '2026 - 2027',
+                    namaMabigus: "Ka' Muslih Heriyanto"
+                });
+
+                const daftarJadwal = ref([]);
+                const rppTerpilih = ref({});
+
+                // Filter data hanya untuk user yang login
+                const jadwalSaya = computed(() => {
+                    return daftarJadwal.value.filter(j => j.userId === userActive.value?.id);
+                });
+
+                const loadDataOnline = async () => {
+                    if (gscriptUrl === 'YOUR_APPS_SCRIPT_WEB_APP_URL') return;
+                    try {
+                        const response = await fetch(gscriptUrl);
+                        const data = await response.json();
+                        daftarJadwal.value = data.reverse();
+                    } catch (error) {
+                        console.error("Gagal sinkronisasi data cloud:", error);
+                    }
+                };
+
+                const handleLogin = () => {
+                    const user = dataUser.find(u => u.id === loginForm.value.id.trim().toLowerCase() && u.pass === loginForm.value.password);
+                    if (user) {
+                        isLoggedIn.value = true;
+                        userActive.value = { id: user.id, NamaPembina: user.nama, Kualifikasi: user.kualifikasi };
+                        loadDataOnline();
+                        setInterval(loadDataOnline, 10000); // Sinkronisasi otomatis berkala setiap 10 detik
+                    } else {
+                        loginError.value = 'ID Pembina atau Password Anda salah!';
+                    }
+                };
+
+                const tambahJadwal = async () => {
+                    if (gscriptUrl === 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
+                        alert("Aplikasi berjalan dalam mode lokal. Hubungkan ke Google Apps Script Anda untuk sinkronisasi antar-device.");
+                        return;
+                    }
+                    isSaving.value = true;
+                    const itemBaru = {
+                        tanggal: formJadwal.value.tanggal, waktu: formJadwal.value.waktu,
+                        pembina: userActive.value.NamaPembina, golongan: formJadwal.value.golongan,
+                        durasi: formJadwal.value.durasi, materi: formJadwal.value.materi,
+                        tujuan: formJadwal.value.tujuan, kegiatan: formJadwal.value.kegiatan,
+                        alat: formJadwal.value.alat, evaluasi: formJadwal.value.evaluasi,
+                        linkLKS: formJadwal.value.linkLKS.trim(),
+                        userId: userActive.value.id
                     };
-                    pilihanCepat.value.index = '';
-                    await loadDataOnline();
-                } catch (error) {
-                    alert('Gagal mengirim data sinkronisasi ke cloud.');
-                } finally {
-                    isSaving.value = false;
-                }
-            };
 
-            const formatTanggal = (stringTanggal) => {
-                if(!stringTanggal) return '';
-                const d = new Date(stringTanggal);
-                if(isNaN(d.getTime())) return stringTanggal;
-                return d.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            };
+                    try {
+                        await fetch(gscriptUrl, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(itemBaru)
+                        });
 
-            const cetakRPP = (jadwal) => { rppTerpilih.value = { ...jadwal }; setTimeout(() => { window.print(); }, 300); };
-            const updateOpsiMateri = () => { formJadwal.value.golongan = pilihanCepat.value.golongan; pilihanCepat.value.index = ''; };
-            const logout = () => { isLoggedIn.value = false; userActive.value = null; };
-            const tabClass = (t) => `py-3 px-4 font-semibold text-sm border-b-2 ${currentTab.value === t ? 'border-sky-600 text-sky-700' : 'border-transparent text-slate-500'}`;
+                        alert('Berhasil tersimpan ke cloud global terpadu!');
+                        formJadwal.value = {
+                            tanggal: '', waktu: '14.00 - 15.30', golongan: 'Siaga', durasi: '90 Menit',
+                            materi: '', tujuan: '', kegiatan: '', alat: '', evaluasi: '', linkLKS: ''
+                        };
+                        pilihanCepat.value.index = '';
+                        await loadDataOnline();
+                    } catch (error) {
+                        alert('Gagal mengirim data sinkronisasi ke cloud.');
+                    } finally {
+                        isSaving.value = false;
+                    }
+                };
 
-            const terapkanMateriCepat = () => {
-                const idx = pilihanCepat.value.index;
-                if (idx === '') return;
-                const mat = bankMateri[pilihanCepat.value.golongan][idx];
-                formJadwal.value.materi = mat.materi; formJadwal.value.tujuan = mat.tujuan;
-                formJadwal.value.kegiatan = mat.kegiatan; formJadwal.value.alat = mat.alat; formJadwal.value.evaluasi = mat.evaluasi;
-            };
+                const formatTanggal = (stringTanggal) => {
+                    if (!stringTanggal) return '';
+                    const d = new Date(stringTanggal);
+                    if (isNaN(d.getTime())) return stringTanggal;
+                    return d.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                };
 
-            return {
-                isLoggedIn, isSaving, userActive, loginForm, loginError, currentTab, pilihanCepat, formJadwal, bankMateri, pengaturan, daftarJadwal, rppTerpilih,
-                handleLogin, logout, updateOpsiMateri, terapkanMateriCepat, tambahJadwal, formatTanggal, cetakRPP, tabClass, loadDataOnline
-            };
-        }
-    }).mount('#app');
-</script>
+                const cetakRPP = (jadwal) => { rppTerpilih.value = { ...jadwal }; setTimeout(() => { window.print(); }, 300); };
+                const updateOpsiMateri = () => { formJadwal.value.golongan = pilihanCepat.value.golongan; pilihanCepat.value.index = ''; };
+                const logout = () => { isLoggedIn.value = false; userActive.value = null; };
+                const tabClass = (t) => `py-3 px-4 font-semibold text-sm border-b-2 ${currentTab.value === t ? 'border-sky-600 text-sky-700' : 'border-transparent text-slate-500'}`;
+
+                const terapkanMateriCepat = () => {
+                    const idx = pilihanCepat.value.index;
+                    if (idx === '') return;
+                    const mat = bankMateri[pilihanCepat.value.golongan][idx];
+                    formJadwal.value.materi = mat.materi; formJadwal.value.tujuan = mat.tujuan;
+                    formJadwal.value.kegiatan = mat.kegiatan; formJadwal.value.alat = mat.alat; formJadwal.value.evaluasi = mat.evaluasi;
+                };
+
+                return {
+                    isLoggedIn, isSaving, userActive, loginForm, loginError, currentTab, pilihanCepat, formJadwal, bankMateri, pengaturan, daftarJadwal, jadwalSaya, rppTerpilih,
+                    handleLogin, logout, updateOpsiMateri, terapkanMateriCepat, tambahJadwal, formatTanggal, cetakRPP, tabClass, loadDataOnline
+                };
+            }
+        }).mount('#app');
+    </script>
 </body>
+
 </html>

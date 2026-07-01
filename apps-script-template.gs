@@ -49,16 +49,20 @@ function doPost(e) {
     const sheet = getSheet();
     var body = JSON.parse(e.postData.contents);
 
-    // Hapus data berdasarkan createdAt
+    // Hapus data berdasarkan userId + createdAt
     if (body._action === 'delete') {
       var data = sheet.getDataRange().getValues();
       var headers = data[0];
       var createdAtCol = headers.indexOf('createdAt') + 1;
+      var userIdCol = headers.indexOf('userId') + 1;
       if (createdAtCol === 0) throw new Error('Kolom createdAt tidak ditemukan');
 
       for (var i = data.length - 1; i >= 1; i--) {
         var rowDate = data[i][createdAtCol - 1];
-        if (String(rowDate) === String(body.createdAt)) {
+        var rowUserId = userIdCol > 0 ? data[i][userIdCol - 1] : '';
+        var rowTime = rowDate instanceof Date ? rowDate.getTime() : new Date(rowDate).getTime();
+        var targetTime = new Date(body.createdAt).getTime();
+        if (Math.abs(rowTime - targetTime) < 2000 && String(rowUserId) === String(body.userId)) {
           sheet.deleteRow(i + 1);
           return jsonResponse({ success: true, deleted: true });
         }

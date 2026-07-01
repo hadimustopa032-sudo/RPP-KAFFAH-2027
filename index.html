@@ -512,6 +512,7 @@
 
                 const tambahJadwal = async () => {
                     isSaving.value = true;
+                    const _id = crypto.randomUUID();
                     const itemBaru = {
                         tanggal: formJadwal.value.tanggal, waktu: formJadwal.value.waktu,
                         pembina: userActive.value.NamaPembina, golongan: formJadwal.value.golongan,
@@ -519,6 +520,7 @@
                         tujuan: formJadwal.value.tujuan, kegiatan: formJadwal.value.kegiatan,
                         alat: formJadwal.value.alat, evaluasi: formJadwal.value.evaluasi,
                         linkLKS: formJadwal.value.linkLKS.trim(),
+                        _id: _id,
                         userId: userActive.value.id
                     };
 
@@ -554,7 +556,7 @@
                             method: 'POST',
                             mode: 'no-cors',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ _action: 'delete', _sheetRow: jadwal._sheetRow })
+                            body: JSON.stringify({ _action: 'delete', _id: jadwal._id })
                         });
                         alert('Berhasil dihapus dari cloud!');
                         await loadDataOnline();

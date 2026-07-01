@@ -32,9 +32,10 @@ function doGet(e) {
     if (data.length < 2) return jsonResponse([]);
 
     const headers = data[0];
-    const result = data.slice(1).map(function(row) {
+    const result = data.slice(1).map(function(row, idx) {
       var obj = {};
       headers.forEach(function(h, i) { obj[h] = row[i]; });
+      obj._sheetRow = idx + 2; // baris asli di sheet (1-indexed, +2 karena header di row 1)
       return obj;
     });
 
@@ -49,25 +50,12 @@ function doPost(e) {
     const sheet = getSheet();
     var body = JSON.parse(e.postData.contents);
 
-    // Hapus data berdasarkan userId + createdAt
+    // Hapus data berdasarkan _sheetRow
     if (body._action === 'delete') {
-      var data = sheet.getDataRange().getValues();
-      var headers = data[0];
-      var createdAtCol = headers.indexOf('createdAt') + 1;
-      var userIdCol = headers.indexOf('userId') + 1;
-      if (createdAtCol === 0) throw new Error('Kolom createdAt tidak ditemukan');
-
-      for (var i = data.length - 1; i >= 1; i--) {
-        var rowDate = data[i][createdAtCol - 1];
-        var rowUserId = userIdCol > 0 ? data[i][userIdCol - 1] : '';
-        var rowTime = rowDate instanceof Date ? rowDate.getTime() : new Date(rowDate).getTime();
-        var targetTime = new Date(body.createdAt).getTime();
-        if (Math.abs(rowTime - targetTime) < 2000 && String(rowUserId) === String(body.userId)) {
-          sheet.deleteRow(i + 1);
-          return jsonResponse({ success: true, deleted: true });
-        }
-      }
-      return jsonResponse({ error: 'Data tidak ditemukan' }, 404);
+      var rowNum = body._sheetRow;
+      if (!rowNum) throw new Error('_sheetRow tidak ditemukan');
+      sheet.deleteRow(rowNum);
+      return jsonResponse({ success: true, deleted: true });
     }
 
     // Tambah data baru

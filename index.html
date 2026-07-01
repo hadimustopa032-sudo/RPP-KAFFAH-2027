@@ -554,7 +554,7 @@
                             method: 'POST',
                             mode: 'no-cors',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ _action: 'delete', createdAt: jadwal.createdAt, userId: jadwal.userId })
+                            body: JSON.stringify({ _action: 'delete', _sheetRow: jadwal._sheetRow })
                         });
                         alert('Berhasil dihapus dari cloud!');
                         await loadDataOnline();

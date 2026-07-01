@@ -1,25 +1,25 @@
 # AGENTS.md — RPP Pramuka Kaffah
 
-## Overview
-
-Single-page Vue 3 + Tailwind CSS app for managing scout (Pramuka) lesson plans (RPP). All code is in `index.html` — no build step, no package manager, no tests. Backend is Google Apps Script for cross-device sync.
+Single-page Vue 3 + Tailwind CSS app for managing Pramuka lesson plans (RPP).
+All code in `index.html` — no build, no npm, no tests. Google Apps Script for cloud sync.
 
 ## Key facts
 
-- **Single file**: `index.html` contains HTML, CSS (Tailwind CDN), and Vue 3 app (CDN, `vue.global.js`). No npm/node.
-- **Google Apps Script**: Cloud sync URL is hardcoded at line 292. The app checks if it's the placeholder URL — if so, it shows a warning and runs locally only.
-- **Users**: 12 hardcoded accounts (lines 363–376). All share password `123456789`. IDs are lowercase name slugs (e.g. `hamidi`, `bellamonalisa`).
-- **Material bank**: 22 Siaga + 23 Penggalang SKU materials hardcoded in `bankMateri` (lines 311–360). Select a golongan + index to auto-fill the form.
-- **Auto-sync**: After login, fetches cloud data every 10 seconds (`setInterval(loadDataOnline, 10000)`).
-- **Print**: Uses `@media print` CSS (lines 12–17). The `#print-area` div is hidden on screen, visible when printing. Triggered by `window.print()`.
+- **Single file** (576 lines): HTML + Tailwind CDN (`@tailwindcss/browser@4`) + Vue 3 CDN (`vue.global.js`). Open in browser directly.
+- **Cloud sync**: `gscriptUrl` at line 380. `loadDataOnline` (line 486) and `tambahJadwal` (line 509) both skip if `gscriptUrl` matches the hardcoded URL — so **cloud sync is effectively disabled** unless you change both the URL and the check strings.
+- **Users**: 12 accounts in `dataUser` (lines 451–464). All password `123456789`. IDs are lowercase slugs (`hamidi`, `bellamonalisa`, etc.).
+- **Materials**: 22 Siaga + 23 Penggalang SKU items in `bankMateri` (lines 398–448). Pick golongan + index to auto-fill the form.
+- **Auto-refresh**: `setInterval(loadDataOnline, 10000)` after login (line 503).
+- **Print**: `#print-area` div via `@media print` (lines 13–33). Triggered by `window.print()` (line 554).
 - **Language**: Indonesian throughout (UI, comments, data).
 
-## Commands
+## Data source of truth
 
-None — this is a static HTML file opened directly in a browser. No dev server, no build, no tests.
+`index.html` is the **single source of truth** for users, materials, and settings. The `.txt` files (`users.txt`, `materi-siaga.txt`, `materi-penggalang.txt`) are documentation copies only — edit `index.html` to make real changes.
 
 ## Gotchas
 
-- `mode: 'no-cors'` is used for POST to Google Apps Script (line 435) — responses are opaque, so success is assumed unless the request throws.
-- Adding new users requires editing the `dataUser` array; adding materials requires editing `bankMateri`.
-- If deploying, update the `gscriptUrl` at line 292 to your deployed Google Apps Script web app URL.
+- `mode: 'no-cors'` used for POST (line 528) — responses are opaque; success assumed unless request throws.
+- Adding users → edit `dataUser` array (~line 451); adding materials → edit `bankMateri` (~line 398); changing pangkalan data → edit `pengaturan` (~line 467).
+- To enable real cloud sync: replace `gscriptUrl` value AND update both URL checks (lines 487, 510) to point to your deployed Apps Script URL.
+- No dev server, no test runner, no formatter or linter config.

@@ -377,7 +377,7 @@
         const { createApp, ref, computed } = Vue;
 
         // SINKRONISASI GLOBAL: Ganti URL ini dengan Web App URL hasil deploy Google Apps Script Anda
-        const gscriptUrl = 'https://script.google.com/macros/s/AKfycbzFGIr6nimKQ9A6R6BP5DiDX3GIbAJ4mjDcKTDg8eAPXlTrxapMfyl557exnwx2TNY/exec';
+        const gscriptUrl = 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQ8HcrJt7Sq32GTzcjLwipyJU8Km0Ov2z8pMa2WmY3Wht9HLdQVWHHcHTSWYZ-4o_awL8428421SQXnryEDOG9SyHRMEjxkxIOcZpdgDvwecLj2YkP4OAYnsERv2EDGBcg5OaGHnwDJBV5eGmil2WMlyOYi3PkBXKqiOFiEofhV6Q1gYEm8TxRAgq1Y13GkKLL4BeWh9thSsf0j8utbtnwum6173RNl5nBHZDfkMheV1OE5QCes16nLx6mrtz6H6Dv1W9W_rdGlZl2eZEf2G8B93N-bOQ&lib=McPF5buAiE9F2lrAbDKNhq59FcpMqOMrf';
 
         createApp({
             setup() {
@@ -478,13 +478,14 @@
                 const daftarJadwal = ref([]);
                 const rppTerpilih = ref({});
 
-                // Filter data hanya untuk user yang login
+                // Filter data hanya untuk user yang login (admin01 lihat semua)
                 const jadwalSaya = computed(() => {
+                    if (userActive.value?.id === 'admin01') return daftarJadwal.value;
                     return daftarJadwal.value.filter(j => j.userId === userActive.value?.id);
                 });
 
                 const loadDataOnline = async () => {
-                    if (gscriptUrl === 'https://script.google.com/macros/s/AKfycbzFGIr6nimKQ9A6R6BP5DiDX3GIbAJ4mjDcKTDg8eAPXlTrxapMfyl557exnwx2TNY/exec') return;
+                    if (gscriptUrl === 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQ8HcrJt7Sq32GTzcjLwipyJU8Km0Ov2z8pMa2WmY3Wht9HLdQVWHHcHTSWYZ-4o_awL8428421SQXnryEDOG9SyHRMEjxkxIOcZpdgDvwecLj2YkP4OAYnsERv2EDGBcg5OaGHnwDJBV5eGmil2WMlyOYi3PkBXKqiOFiEofhV6Q1gYEm8TxRAgq1Y13GkKLL4BeWh9thSsf0j8utbtnwum6173RNl5nBHZDfkMheV1OE5QCes16nLx6mrtz6H6Dv1W9W_rdGlZl2eZEf2G8B93N-bOQ&lib=McPF5buAiE9F2lrAbDKNhq59FcpMqOMrf') return;
                     try {
                         const response = await fetch(gscriptUrl);
                         const data = await response.json();
@@ -507,7 +508,7 @@
                 };
 
                 const tambahJadwal = async () => {
-                    if (gscriptUrl === 'https://script.google.com/macros/s/AKfycbzFGIr6nimKQ9A6R6BP5DiDX3GIbAJ4mjDcKTDg8eAPXlTrxapMfyl557exnwx2TNY/exec') {
+                    if (gscriptUrl === 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQ8HcrJt7Sq32GTzcjLwipyJU8Km0Ov2z8pMa2WmY3Wht9HLdQVWHHcHTSWYZ-4o_awL8428421SQXnryEDOG9SyHRMEjxkxIOcZpdgDvwecLj2YkP4OAYnsERv2EDGBcg5OaGHnwDJBV5eGmil2WMlyOYi3PkBXKqiOFiEofhV6Q1gYEm8TxRAgq1Y13GkKLL4BeWh9thSsf0j8utbtnwum6173RNl5nBHZDfkMheV1OE5QCes16nLx6mrtz6H6Dv1W9W_rdGlZl2eZEf2G8B93N-bOQ&lib=McPF5buAiE9F2lrAbDKNhq59FcpMqOMrf') {
                         alert("Aplikasi berjalan dalam mode lokal. Hubungkan ke Google Apps Script Anda untuk sinkronisasi antar-device.");
                         return;
                     }

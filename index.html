@@ -377,7 +377,7 @@
         const { createApp, ref, computed } = Vue;
 
         // SINKRONISASI GLOBAL: Ganti URL ini dengan Web App URL hasil deploy Google Apps Script Anda
-        const gscriptUrl = 'https://script.google.com/macros/s/AKfycbzi19m0_p5sa6lR02VccGeoF3mgD7sbAdcoXKBsD3VaTXoPX-iuHtu0rIUG1FLTJv8j/exec';
+        const gscriptUrl = 'https://script.google.com/macros/s/AKfycbzFGIr6nimKQ9A6R6BP5DiDX3GIbAJ4mjDcKTDg8eAPXlTrxapMfyl557exnwx2TNY/exec';
 
         createApp({
             setup() {
@@ -484,7 +484,7 @@
                 });
 
                 const loadDataOnline = async () => {
-                    if (gscriptUrl === 'YOUR_APPS_SCRIPT_WEB_APP_URL') return;
+                    if (gscriptUrl === 'https://script.google.com/macros/s/AKfycbzFGIr6nimKQ9A6R6BP5DiDX3GIbAJ4mjDcKTDg8eAPXlTrxapMfyl557exnwx2TNY/exec') return;
                     try {
                         const response = await fetch(gscriptUrl);
                         const data = await response.json();
@@ -507,7 +507,7 @@
                 };
 
                 const tambahJadwal = async () => {
-                    if (gscriptUrl === 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
+                    if (gscriptUrl === 'https://script.google.com/macros/s/AKfycbzFGIr6nimKQ9A6R6BP5DiDX3GIbAJ4mjDcKTDg8eAPXlTrxapMfyl557exnwx2TNY/exec') {
                         alert("Aplikasi berjalan dalam mode lokal. Hubungkan ke Google Apps Script Anda untuk sinkronisasi antar-device.");
                         return;
                     }

@@ -248,6 +248,10 @@
                                             class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-1 rounded text-xs font-medium transition shadow">
                                             📄 Cetak RPP
                                         </button>
+                                        <button @click="hapusJadwal(jadwal, index)"
+                                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-medium transition shadow">
+                                            🗑 Hapus
+                                        </button>
                                     </td>
                                 </tr>
                                 <tr v-if="jadwalSaya.length === 0">
@@ -540,6 +544,27 @@
                     }
                 };
 
+                const isDeleting = ref(false);
+
+                const hapusJadwal = async (jadwal, index) => {
+                    if (!confirm(`Yakin ingin menghapus RPP "${jadwal.materi}" (${jadwal.pembina})?`)) return;
+                    isDeleting.value = true;
+                    try {
+                        await fetch(gscriptUrl, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ _action: 'delete', createdAt: jadwal.createdAt })
+                        });
+                        alert('Berhasil dihapus dari cloud!');
+                        await loadDataOnline();
+                    } catch (error) {
+                        alert('Gagal menghapus data.');
+                    } finally {
+                        isDeleting.value = false;
+                    }
+                };
+
                 const formatTanggal = (stringTanggal) => {
                     if (!stringTanggal) return '';
                     const d = new Date(stringTanggal);
@@ -562,7 +587,7 @@
 
                 return {
                     isLoggedIn, isSaving, userActive, loginForm, loginError, currentTab, pilihanCepat, formJadwal, bankMateri, pengaturan, daftarJadwal, jadwalSaya, rppTerpilih,
-                    handleLogin, logout, updateOpsiMateri, terapkanMateriCepat, tambahJadwal, formatTanggal, cetakRPP, tabClass, loadDataOnline
+                    handleLogin, logout, updateOpsiMateri, terapkanMateriCepat, tambahJadwal, hapusJadwal, isDeleting, formatTanggal, cetakRPP, tabClass, loadDataOnline
                 };
             }
         }).mount('#app');

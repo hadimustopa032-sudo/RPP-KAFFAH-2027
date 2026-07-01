@@ -49,6 +49,24 @@ function doPost(e) {
     const sheet = getSheet();
     var body = JSON.parse(e.postData.contents);
 
+    // Hapus data berdasarkan createdAt
+    if (body._action === 'delete') {
+      var data = sheet.getDataRange().getValues();
+      var headers = data[0];
+      var createdAtCol = headers.indexOf('createdAt') + 1;
+      if (createdAtCol === 0) throw new Error('Kolom createdAt tidak ditemukan');
+
+      for (var i = data.length - 1; i >= 1; i--) {
+        var rowDate = data[i][createdAtCol - 1];
+        if (String(rowDate) === String(body.createdAt)) {
+          sheet.deleteRow(i + 1);
+          return jsonResponse({ success: true, deleted: true });
+        }
+      }
+      return jsonResponse({ error: 'Data tidak ditemukan' }, 404);
+    }
+
+    // Tambah data baru
     sheet.appendRow([
       body.tanggal || '',
       body.waktu || '',

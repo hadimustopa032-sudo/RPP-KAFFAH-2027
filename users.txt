@@ -18,4 +18,4 @@ Format: ID | Password | Nama Lengkap | Kualifikasi
 12. admin01        | 123456789 | Admin Gudep                   | -
 13. akmal        | 123456789 | Ka' Akmal Mar'i Hamidy          | -        
 14. fitriani        | 123456789 | Ka' Fitriani Wahyu Setyaningrum    | -
-15. nisaul        | 123456789 | Ka' Nisaul Hasanah                   | -
+15. nisaul        | 123456789 | Ka' Nisaul Hasanah        | -

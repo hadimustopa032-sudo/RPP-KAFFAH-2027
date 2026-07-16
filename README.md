@@ -4,7 +4,7 @@ Aplikasi web statis untuk mengelola Rencana Pelaksanaan Pembelajaran (RPP) Pramu
 
 ## Fitur
 
-- Login 12 akun Pembina (password seragam: `123456789`)
+- Login 15 akun Pembina (password seragam: `123456789`)
 - Pemilihan cepat materi SKU Siaga (22) & Penggalang (23) — isi form otomatis
 - Simpan RPP ke cloud via Google Sheets (Google Apps Script)
 - Data RPP per akun — setiap Pembina hanya melihat agenda sendiri
